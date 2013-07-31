@@ -5,7 +5,6 @@ import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.ycao.cashflowestimation.R;
-import com.ycao.cashflowestimation.dal.CouchBaseConnector;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
 import com.ycao.cashflowestimation.domain.RecurrentCashFlow;
 
@@ -32,7 +30,6 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboFragmentActivity implements ActionBar.TabListener {
 
-    @Inject CouchBaseConnector couchConn;
     @Inject SQLiteConnector sqlConn;
 
     // Create the adapter that will return a fragment for each of the three
