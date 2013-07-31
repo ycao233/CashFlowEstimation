@@ -12,6 +12,8 @@ import java.util.List;
  */
 public class Invoice {
 
+    private long _id;
+
     private String invoiceNumber;
 
     private double credit;
@@ -57,7 +59,7 @@ public class Invoice {
     /**
      * paid?
      */
-    public boolean isPaid() {
+    public boolean isPaidInFull() {
         for (PaymentInstallment p : getPayments()) {
             if (!p.isInstallmentPaid()) {
                 return false;
@@ -90,32 +92,5 @@ public class Invoice {
 
     public void addPayment(PaymentInstallment p) {
         getPayments().add(p);
-    }
-
-    public static class PaymentInstallment {
-        private DateMidnight date;
-        private double amountDue;
-        private boolean isPaid;
-
-        public PaymentInstallment(DateMidnight date, double amountDue) {
-            this.date = date;
-            this.amountDue = amountDue;
-        }
-
-        public boolean isInstallmentPaid() {
-            return isPaid;
-        }
-
-        public void setInstallmentPaid(boolean isPaid) {
-            this.isPaid = isPaid;
-        }
-
-        public DateMidnight getDate() {
-            return date;
-        }
-
-        public double getAmountDue() {
-            return amountDue;
-        }
     }
 }

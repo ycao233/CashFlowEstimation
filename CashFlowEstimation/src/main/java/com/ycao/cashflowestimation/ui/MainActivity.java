@@ -1,10 +1,8 @@
 package com.ycao.cashflowestimation.ui;
 
-import java.io.IOException;
-import java.util.Locale;
-
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,47 +16,50 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.couchbase.cblite.CBLServer;
+import com.google.inject.Inject;
 import com.ycao.cashflowestimation.R;
+import com.ycao.cashflowestimation.dal.CouchBaseConnector;
+import com.ycao.cashflowestimation.dal.SQLiteConnector;
+import com.ycao.cashflowestimation.domain.RecurrentCashFlow;
 
+import java.util.List;
+import java.util.Locale;
+
+import roboguice.activity.RoboFragmentActivity;
 import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
 @ContentView(R.layout.activity_main)
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
+public class MainActivity extends RoboFragmentActivity implements ActionBar.TabListener {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link android.support.v4.app.FragmentPagerAdapter} derivative, which
-     * will keep every loaded fragment in memory. If this becomes too memory
-     * intensive, it may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    @Inject SectionsPagerAdapter mSectionsPagerAdapter;
+    @Inject CouchBaseConnector couchConn;
+    @Inject SQLiteConnector sqlConn;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    ViewPager mViewPager;
+    // Create the adapter that will return a fragment for each of the three
+    // primary sections of the app.
+    SectionsPagerAdapter mSectionsPagerAdapter;
 
-    @Inject
-    com.ycao.cashflowestimation.dal.CouchBaseConnector dbConn;
+    // Set up the ViewPager with the sections adapter.
+    @InjectView(R.id.pager) ViewPager mViewPager;
+
+    public static final String APP_NAME = "CASH_FLOW_ESTIMATION";
+    public static final String CLASS_NAME = MainActivity.class.getName();
+
+    private static final String INITIALIZED = "initialized";
+    private static final String WEEKDAY_INCOME = "weekdayIncome";
+    private static final String WEEKEND_INCOME = "weekendIncome";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the app.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+        //mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         // When swiping between different sections, select the corresponding
@@ -73,29 +74,34 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
             actionBar.addTab(
                     actionBar.newTab()
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
 
-        startCouchbase();
+        //dbConn.startCouchbase(getFilesDir().getAbsolutePath());
+        sqlConn.open();
+        bootstrap();
     }
 
-    // startup a couchbase lite instance
-    private void startCouchbase() {
-        String filesDir = getFilesDir().getAbsolutePath();
-        try {
-            CBLServer server = new CBLServer(filesDir);
-            server.getDatabaseNamed(DB_NAME);
-        } catch (IOException e) {
-            Log.e("MainActivity", "Error starting TDServer", e);
+    private void bootstrap() {
+        SharedPreferences settings = getSharedPreferences(APP_NAME, MODE_PRIVATE);
+        if (!settings.getBoolean(INITIALIZED, false)) {
+            SharedPreferences.Editor editor = settings.edit();
+            sqlConn.bootstrapData();
+            editor.putBoolean(INITIALIZED, true);
+            editor.putFloat(WEEKDAY_INCOME, 5000);
+            editor.putFloat(WEEKEND_INCOME, 10000);
+            Log.i(CLASS_NAME, "Cashflow Estimation initailized");
+            editor.commit();
+        } else {
+            Log.i(CLASS_NAME, "Cashflow Estimation already initailized, skip bootstrapping");
+            List<RecurrentCashFlow> allOutFlow = RecurrentCashFlow.getAllRecurrentCashFlow(sqlConn.getWritableDatabase());
+            for (RecurrentCashFlow r : allOutFlow) {
+                Log.i(CLASS_NAME, String.format("recurrent cash flow: (%s)", r.toString()));
+            }
         }
-        Log.d("MainActivity", "Got this far, woohoo!");
     }
 
     @Override
