@@ -34,7 +34,7 @@ public class SQLiteConnector extends SQLiteOpenHelper {
 
     private static final String CREATE_INVOICE = String.format("create table %s " +
             "(%s integer primary key autoincrement, " +
-            "%s text not null, " +
+            "%s text not null UNIQUE, " +
             "%s text not null, " +
             "%s real);",
             INVOICE_TABLE,
@@ -75,7 +75,7 @@ public class SQLiteConnector extends SQLiteOpenHelper {
 
     private static final String CREATE_RECURRENT_CASH_FLOW = String.format("create table %s " +
             "(%s integer primary key autoincrement," +
-            "%s text not null," +
+            "%s text not null UNIQUE," +
             "%s text not null," +
             "%s real not null);",
             RECURRENT_CASH_FLOW_TABLE,

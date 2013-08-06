@@ -99,6 +99,10 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
         }
     }
 
+    private void cleanup() {
+        this.deleteDatabase(sqlConn.getDatabaseName());
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

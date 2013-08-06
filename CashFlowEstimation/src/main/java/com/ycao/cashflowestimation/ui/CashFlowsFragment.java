@@ -1,10 +1,12 @@
 package com.ycao.cashflowestimation.ui;
 
+import android.app.TabActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -42,16 +45,35 @@ public class CashFlowsFragment extends RoboFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cash_flows, container, false);
-        EditText weekdayIncome = (EditText) view.findViewById(R.id.weekday_editText);
-        EditText weekendIncome = (EditText) view.findViewById(R.id.weekend_editText);
+        final EditText weekdayIncome = (EditText) view.findViewById(R.id.weekday_editText);
+        final EditText weekendIncome = (EditText) view.findViewById(R.id.weekend_editText);
 
-        SharedPreferences settings = getActivity().getSharedPreferences(APP_NAME, getActivity().MODE_PRIVATE);
+        final SharedPreferences settings = getActivity().getSharedPreferences(APP_NAME, getActivity().MODE_PRIVATE);
         weekdayIncome.setText(String.valueOf(settings.getFloat(WEEKDAY_INCOME, WEEKDAY_INCOME_DEFAULT)));
         weekendIncome.setText(String.valueOf(settings.getFloat(WEEKEND_INCOME, WEEKEND_INCOME_DEFAULT)));
 
         List<RecurrentCashFlow> allOutFlow = RecurrentCashFlow.getAllRecurrentCashFlow(sqlConn.getWritableDatabase());
-        ListView outflow = (ListView) view.findViewById(R.id.recurrent_cashflow_list);
+        final ListView outflow = (ListView) view.findViewById(R.id.recurrent_cashflow_list);
         outflow.setAdapter(new RecurrentCashFlowListAdapter(getActivity(), allOutFlow));
+
+        Button estimateButton = (Button) view.findViewById(R.id.estimate_button);
+        estimateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putFloat(WEEKDAY_INCOME, Float.parseFloat(String.valueOf(weekdayIncome.getText())));
+                editor.putFloat(WEEKEND_INCOME, Float.parseFloat(String.valueOf(weekendIncome.getText())));
+
+                editor.commit();
+
+                List<RecurrentCashFlow> cashflows = ((RecurrentCashFlowListAdapter) outflow.getAdapter()).getOutflows();
+                for (RecurrentCashFlow cashflow : cashflows) {
+                    cashflow.persist(sqlConn.getWritableDatabase());
+                }
+
+                getActivity().getActionBar().setSelectedNavigationItem(0);
+            }
+        });
 
         return view;
     }

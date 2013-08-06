@@ -3,6 +3,7 @@ package com.ycao.cashflowestimation.domain;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
 
@@ -14,6 +15,8 @@ import java.util.List;
  * Created by ycao on 7/27/13.
  */
 public class RecurrentCashFlow {
+
+    private static final String CLASS_NAME = RecurrentCashFlow.class.getName();
 
     /**
      * payment schedule
@@ -36,7 +39,7 @@ public class RecurrentCashFlow {
     private Schedule schedule;
     private double amount;
     private String description;
-    private long _id;
+    private long _id = -1;
 
     public RecurrentCashFlow(Schedule schedule, double amount, String description) {
         this.setSchedule(schedule);
@@ -82,8 +85,14 @@ public class RecurrentCashFlow {
         values.put(SQLiteConnector.RCFT_COL_AMOUNT, this.getAmount());
         values.put(SQLiteConnector.RCFT_COL_DESCRIPTION, this.getDescription());
 
-        long id = db.insert(SQLiteConnector.RECURRENT_CASH_FLOW_TABLE, null, values);
-
+        long id = -1;
+        if (this.getId() == -1) {
+            id = db.insert(SQLiteConnector.RECURRENT_CASH_FLOW_TABLE, null, values);
+            this.setId(id);
+        } else {
+            db.update(SQLiteConnector.RECURRENT_CASH_FLOW_TABLE, values, "_id="+this.getId(), null);
+        }
+        Log.d(CLASS_NAME, "persisted " + this.toString());
         return id;
     }
 
