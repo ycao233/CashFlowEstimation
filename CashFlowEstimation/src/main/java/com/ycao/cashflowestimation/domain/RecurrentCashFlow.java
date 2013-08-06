@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,7 +21,16 @@ public class RecurrentCashFlow {
     public enum Schedule {
         WEEKLY, // pays out on Sunday
         MONTHLY, // pays out on first day of month
-        YEARLY  // pays out jan 1
+        YEARLY; // pays out jan 1
+
+        private static final List<String> AVAILABLE_SCHEDULES = Arrays.asList(WEEKLY.name(), MONTHLY.name(), YEARLY.name());
+        public static List<String> getAvailableSchedules() {
+            return AVAILABLE_SCHEDULES;
+        }
+
+        public String capitalize() {
+            return this.name().charAt(0) + this.name().toLowerCase().substring(1);
+        }
     }
 
     private Schedule schedule;
@@ -29,9 +39,9 @@ public class RecurrentCashFlow {
     private long _id;
 
     public RecurrentCashFlow(Schedule schedule, double amount, String description) {
-        this.schedule = schedule;
-        this.amount = amount;
-        this.description = description;
+        this.setSchedule(schedule);
+        this.setAmount(amount);
+        this.setDescription(description);
     }
 
     public Schedule getSchedule() {
@@ -56,6 +66,14 @@ public class RecurrentCashFlow {
 
     public void setId(long _id) {
         this._id = _id;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
     public long persist(SQLiteDatabase db) {

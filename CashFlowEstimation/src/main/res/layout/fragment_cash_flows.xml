@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/fragment_cash_flow_income_header_textview"
+              style="?android:listSeparatorTextViewStyle"
+              android:text="Incomes "
+              android:textIsSelectable="false"
+              android:textSize="24dip"
+              android:background="#d2f0ff"
+              android:paddingTop="10dip"
+              android:paddingBottom="10dip"
+            />
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dip"
+            android:paddingBottom="10dip"
+            android:layout_gravity="left|center_vertical">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Weekday: "
+                android:id="@+id/weekday_income"
+                android:layout_gravity="left|center_vertical"
+                android:paddingLeft="20dip"/>
+
+        <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:id="@+id/weekday_editText"
+                />
+    </LinearLayout>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dip"
+            android:paddingBottom="10dip"
+            android:layout_gravity="left|center_vertical">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Weekend: "
+                android:id="@+id/weekend_income"
+                android:layout_gravity="left|center_vertical"
+                android:paddingLeft="20dip"/>
+
+        <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:id="@+id/weekend_editText"
+                />
+    </LinearLayout>
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/fragment_cash_flow_income_header_textview"
+              style="?android:listSeparatorTextViewStyle"
+              android:text="Payables"
+              android:textIsSelectable="false"
+              android:textSize="24dip"
+              android:background="#d2f0ff"
+              android:paddingTop="10dip"
+              android:paddingBottom="10dip"
+            />
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent">
+        <ListView android:id="@+id/recurrent_cashflow_list"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:cacheColorHint="@android:color/white"
+                  android:drawSelectorOnTop="false" />
+    </FrameLayout>
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Estimate Again"
+            android:id="@+id/estimate_button"
+            android:layout_gravity="center"
+            android:clickable="false"
+            android:enabled="true"
+            android:visibility="visible"
+            android:gravity="center"
+            />
+
+</LinearLayout>

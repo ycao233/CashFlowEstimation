@@ -41,10 +41,12 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
 
     public static final String APP_NAME = "CASH_FLOW_ESTIMATION";
     public static final String CLASS_NAME = MainActivity.class.getName();
+    public static final String WEEKDAY_INCOME = "weekdayIncome";
+    public static final String WEEKEND_INCOME = "weekendIncome";
+    public static final float WEEKDAY_INCOME_DEFAULT = 5000;
+    public static final float WEEKEND_INCOME_DEFAULT = 10000;
 
     private static final String INITIALIZED = "initialized";
-    private static final String WEEKDAY_INCOME = "weekdayIncome";
-    private static final String WEEKEND_INCOME = "weekendIncome";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,16 +90,12 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
             SharedPreferences.Editor editor = settings.edit();
             sqlConn.bootstrapData();
             editor.putBoolean(INITIALIZED, true);
-            editor.putFloat(WEEKDAY_INCOME, 5000);
-            editor.putFloat(WEEKEND_INCOME, 10000);
+            editor.putFloat(WEEKDAY_INCOME, WEEKDAY_INCOME_DEFAULT);
+            editor.putFloat(WEEKEND_INCOME, WEEKEND_INCOME_DEFAULT);
             Log.i(CLASS_NAME, "Cashflow Estimation initailized");
             editor.commit();
         } else {
             Log.i(CLASS_NAME, "Cashflow Estimation already initailized, skip bootstrapping");
-            List<RecurrentCashFlow> allOutFlow = RecurrentCashFlow.getAllRecurrentCashFlow(sqlConn.getWritableDatabase());
-            for (RecurrentCashFlow r : allOutFlow) {
-                Log.i(CLASS_NAME, String.format("recurrent cash flow: (%s)", r.toString()));
-            }
         }
     }
 
@@ -129,20 +127,29 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+        Fragment cashflowFragment;
+
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a DummySectionFragment (defined as a static inner class
-            // below) with the page number as its lone argument.
-            Fragment fragment = new DummySectionFragment();
-            Bundle args = new Bundle();
-            args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-            fragment.setArguments(args);
-            return fragment;
+            switch (position) {
+                case 0:
+                case 1:
+                    Fragment fragment = new DummySectionFragment();
+                    Bundle args = new Bundle();
+                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
+                    fragment.setArguments(args);
+                    return fragment;
+                case 2:
+                    if (cashflowFragment == null) {
+                        cashflowFragment = new CashFlowsFragment();
+                    }
+                    return cashflowFragment;
+            }
+            return null;
         }
 
         @Override

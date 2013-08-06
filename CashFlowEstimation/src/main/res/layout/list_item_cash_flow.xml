@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp" >
+
+    <TextView
+            android:layout_width="70dp"
+            android:layout_height="50dip"
+            android:text="Name"
+            android:gravity="center_vertical"
+            android:id="@+id/outflow_name_textView"
+            android:layout_alignParentLeft="true"
+            android:textSize="18dip"/>
+
+    <EditText
+            android:layout_weight="10"
+            android:layout_width="0dp"
+            android:layout_height="50dip"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/outflow_amount_editText"/>
+
+    <Spinner
+            android:layout_weight="10"
+            android:layout_width="0dp"
+            android:layout_height="50dip"
+            android:entries="@array/schedule_array"
+            android:id="@+id/schedule_spinner"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            />
+
+
+</LinearLayout>
