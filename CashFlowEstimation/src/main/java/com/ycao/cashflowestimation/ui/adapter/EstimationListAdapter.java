@@ -56,4 +56,8 @@ public class EstimationListAdapter extends BaseAdapter {
         date.setText(dateString);
         return entry;
     }
+
+    public List<CashFlowDate> getItems() {
+        return items;
+    }
 }

@@ -1,10 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <ListView
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_weight="1.5"
+              android:layout_width="match_parent"
+              android:layout_height="0dip"
+              android:id="@+id/today_header_textview"
+              style="?android:listSeparatorTextViewStyle"
+              android:text="today"
+              android:gravity="center"
+              android:textIsSelectable="false"
+              android:textSize="18dip"
+              android:background="#d2f0ff"
+              android:paddingTop="5dip"
+              android:paddingBottom="5dip"
+            />
+    <LinearLayout
+            android:layout_weight="3"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp">
+        <LinearLayout
+                android:layout_weight="6"
+                android:orientation="vertical"
+                android:layout_width="0dip"
+                android:layout_height="match_parent">
+            <EditText
+                android:layout_weight="5"
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:inputType="numberDecimal"
+                android:text="100000"
+                android:textColor="#008000"
+                android:gravity="center"
+                android:ems="10"
+                android:editable="true"
+                android:id="@+id/today_cash_editText"/>
+
+            <TextView
+                android:layout_weight="5"
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:textColor="#FF0000"
+                android:text="(-invoice)"
+                android:gravity="center"
+                android:id="@+id/today_invoice_textView"/>
+        </LinearLayout>
+
+        <Button
+                android:layout_weight="5"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:text="Estimate Again"
+                style="@style/ButtonText"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/blue_button"
+                android:id="@+id/refresh_button"/>
+    </LinearLayout>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="4dip"
+            android:background="#000000"/>
+    <ListView
+            android:layout_weight="15"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
             android:id="@+id/cash_estimation_listView"/>
-</FrameLayout>
+</LinearLayout>

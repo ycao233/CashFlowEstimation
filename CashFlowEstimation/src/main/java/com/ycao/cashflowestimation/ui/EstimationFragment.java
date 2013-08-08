@@ -8,9 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.ycao.cashflowestimation.R;
@@ -56,12 +57,23 @@ public class EstimationFragment extends RoboFragment {
         final ListView cashEstimationList = (ListView) view.findViewById(R.id.cash_estimation_listView);
         CashFlowDate firstDay = getInitialCash();
         CashFlowDate today = estimator.getTodayCashFromPast(firstDay);
-        final List<CashFlowDate> estimatedList = estimator.getSubsequentDates(today, 45, true);
+
+        final TextView todayHeader = (TextView) view.findViewById(R.id.today_header_textview);
+        todayHeader.setText("Today is " + today.getDate().toString("MM/dd/yyyy E"));
+
+        final EditText todayCash = (EditText) view.findViewById(R.id.today_cash_editText);
+        todayCash.setText(String.valueOf(today.getCalculatedCash()));
+
+        final TextView todayDue = (TextView) view.findViewById(R.id.today_invoice_textView);
+        todayDue.setText("(-" + String.valueOf(today.getTotalDue()) + ")");
+
+        Button refresh = (Button) view.findViewById(R.id.refresh_button);
 
         final CashFlowEstimator threadSafeEstimator = estimator;
 
-        /* listview */
-        cashEstimationList.setAdapter(new EstimationListAdapter(getActivity(), estimatedList));
+        cashEstimationList.setAdapter(new EstimationListAdapter(getActivity(), estimator.getSubsequentDates(today, 45, false)));
+
+        /* listeners */
         cashEstimationList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -70,13 +82,36 @@ public class EstimationFragment extends RoboFragment {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 int lastPos = firstVisibleItem + visibleItemCount;
-                Log.d(CLASS_NAME, "last position is: "+lastPos+ ", firstVisibleItem: "+firstVisibleItem+", visibleItemCount: "+visibleItemCount);
                 if ((lastPos == totalItemCount) && !loading) {
                     //I am at last element, and no one initailized loading new items
                     final CashFlowDate lastEstimation = (CashFlowDate) cashEstimationList.getAdapter().getItem(lastPos-1);
-                    new CalculateMoreEstimations(15, lastEstimation, threadSafeEstimator,
-                            estimatedList, (BaseAdapter) (cashEstimationList.getAdapter())).execute();
+                    new CalculateMoreEstimations(15, threadSafeEstimator,
+                            (EstimationListAdapter) (cashEstimationList.getAdapter())).execute();
                 }
+            }
+        });
+
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final SharedPreferences settings = getActivity().getSharedPreferences(Constants.APP_NAME, getActivity().MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                DateMidnight now = DateMidnight.now();
+                editor.putLong(INIT_DATE, now.getMillis());
+                float cashInput = Float.parseFloat(String.valueOf(todayCash.getText()));
+                editor.putFloat(INIT_CASH_FLOW, cashInput);
+                editor.commit();
+                Log.d(CLASS_NAME, String.format("calculating using day: (%s), and cash amount: (%f)",
+                        now.toString("MM/dd/yyyy"), cashInput));
+
+                CashFlowDate today = new CashFlowDate(now);
+                today.setCalculatedCash(cashInput);
+
+                EstimationListAdapter adapter = (EstimationListAdapter) cashEstimationList.getAdapter();
+                adapter.getItems().clear();
+                adapter.getItems().addAll(estimator.getSubsequentDates(today, 45, false));
+
+                adapter.notifyDataSetChanged();
             }
         });
 
@@ -88,7 +123,7 @@ public class EstimationFragment extends RoboFragment {
         estimator.setWeekdayIncome(settings.getFloat(WEEKDAY_INCOME, WEEKDAY_INCOME_DEFAULT));
         estimator.setWeekendIncome(settings.getFloat(WEEKEND_INCOME, WEEKEND_INCOME_DEFAULT));
         long firstDate = settings.getLong(INIT_DATE, DateMidnight.now().getMillis());
-        long cash = settings.getLong(INIT_CASH_FLOW, 0);
+        float cash = settings.getFloat(INIT_CASH_FLOW, 0);
         CashFlowDate date = new CashFlowDate(new DateMidnight(firstDate));
         date.setCalculatedCash(cash);
 
@@ -97,25 +132,22 @@ public class EstimationFragment extends RoboFragment {
 
     private class CalculateMoreEstimations extends AsyncTask<Void, Void, Void> {
         private int days;
-        private CashFlowDate lastEstimation;
         private CashFlowEstimator estimator;
-        private List<CashFlowDate> estimatedList;
-        private BaseAdapter adapter;
+        private EstimationListAdapter adapter;
 
-        public CalculateMoreEstimations(int days, CashFlowDate lastEstimation,
-                    CashFlowEstimator threadSafeEstimator, List<CashFlowDate> estimatedList, BaseAdapter adapter) {
+        public CalculateMoreEstimations(int days, CashFlowEstimator threadSafeEstimator,
+                                        EstimationListAdapter adapter) {
             this.days = days;
-            this.lastEstimation = lastEstimation;
             this.estimator = threadSafeEstimator;
-            this.estimatedList = estimatedList;
             this.adapter = adapter;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             loading = true;
+            CashFlowDate lastEstimation = (CashFlowDate) adapter.getItem(adapter.getCount()-1);
             List<CashFlowDate> nextDays = estimator.getSubsequentDates(lastEstimation, days, false);
-            estimatedList.addAll(nextDays);
+            adapter.getItems().addAll(nextDays);
             return null;
         }
 
