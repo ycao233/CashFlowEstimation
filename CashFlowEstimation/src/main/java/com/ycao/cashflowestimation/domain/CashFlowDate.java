@@ -61,4 +61,19 @@ public class CashFlowDate {
         return invoices;
     }
 
+    public double getTotalDue() {
+        double total = 0;
+        for(Invoice invoice : getInvoices()) {
+            for (PaymentInstallment p : invoice.getPaymentDueOn(getDate())) {
+                total += p.getAmountDue();
+            }
+        }
+
+        return total;
+    }
+
+    public String toString() {
+        return String.format("date: (%s), estimated cash: %(f), total due: %(f)", getDate().toString("dd/MM/yyyy"), getCalculatedCash(), getTotalDue()) +
+                String.format("\ndebug: day of week: (%d), day of month: (%d), day of year: (%d)", getDate().getDayOfWeek(), getDate().getDayOfMonth(), getDate().getDayOfYear());
+    }
 }

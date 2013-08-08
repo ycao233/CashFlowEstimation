@@ -18,9 +18,8 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import com.ycao.cashflowestimation.R;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
-import com.ycao.cashflowestimation.domain.RecurrentCashFlow;
+import com.ycao.cashflowestimation.utils.Constants;
 
-import java.util.List;
 import java.util.Locale;
 
 import roboguice.activity.RoboFragmentActivity;
@@ -39,14 +38,7 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
     // Set up the ViewPager with the sections adapter.
     @InjectView(R.id.pager) ViewPager mViewPager;
 
-    public static final String APP_NAME = "CASH_FLOW_ESTIMATION";
     public static final String CLASS_NAME = MainActivity.class.getName();
-    public static final String WEEKDAY_INCOME = "weekdayIncome";
-    public static final String WEEKEND_INCOME = "weekendIncome";
-    public static final float WEEKDAY_INCOME_DEFAULT = 5000;
-    public static final float WEEKEND_INCOME_DEFAULT = 10000;
-
-    private static final String INITIALIZED = "initialized";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,13 +77,13 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
     }
 
     private void bootstrap() {
-        SharedPreferences settings = getSharedPreferences(APP_NAME, MODE_PRIVATE);
-        if (!settings.getBoolean(INITIALIZED, false)) {
+        SharedPreferences settings = getSharedPreferences(Constants.APP_NAME, MODE_PRIVATE);
+        if (!settings.getBoolean(Constants.INITIALIZED, false)) {
             SharedPreferences.Editor editor = settings.edit();
             sqlConn.bootstrapData();
-            editor.putBoolean(INITIALIZED, true);
-            editor.putFloat(WEEKDAY_INCOME, WEEKDAY_INCOME_DEFAULT);
-            editor.putFloat(WEEKEND_INCOME, WEEKEND_INCOME_DEFAULT);
+            editor.putBoolean(Constants.INITIALIZED, true);
+            editor.putFloat(Constants.WEEKDAY_INCOME, Constants.WEEKDAY_INCOME_DEFAULT);
+            editor.putFloat(Constants.WEEKEND_INCOME, Constants.WEEKEND_INCOME_DEFAULT);
             Log.i(CLASS_NAME, "Cashflow Estimation initailized");
             editor.commit();
         } else {
@@ -131,6 +123,7 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+        Fragment cashEstimationFragment;
         Fragment cashflowFragment;
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -141,6 +134,11 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
+                    if (cashEstimationFragment == null) {
+                        cashEstimationFragment = new EstimationFragment();
+                    }
+                    return cashEstimationFragment;
+
                 case 1:
                     Fragment fragment = new DummySectionFragment();
                     Bundle args = new Bundle();
