@@ -13,4 +13,10 @@
         <item>Yearly</item>
     </string-array>
 
+    <string-array name="time_filter_array">
+        <item>This Week</item>
+        <item>This Month</item>
+        <item>All</item>
+    </string-array>
+
 </resources>

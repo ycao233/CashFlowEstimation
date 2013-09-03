@@ -14,7 +14,7 @@
               android:gravity="center"
               android:textIsSelectable="false"
               android:textSize="18dip"
-              android:background="#d2f0ff"
+              android:background="@color/light_blue"
               android:paddingTop="5dip"
               android:paddingBottom="5dip"
             />
@@ -34,7 +34,7 @@
                 android:layout_height="0dip"
                 android:inputType="numberDecimal"
                 android:text="100000"
-                android:textColor="#008000"
+                android:textColor="@android:color/holo_green_dark"
                 android:gravity="center"
                 android:ems="10"
                 android:editable="true"
@@ -46,7 +46,7 @@
                 android:layout_height="0dip"
                 android:inputType="numberDecimal"
                 android:ems="10"
-                android:textColor="#FF0000"
+                android:textColor="@android:color/holo_red_dark"
                 android:text="(-invoice)"
                 android:gravity="center"
                 android:id="@+id/today_invoice_textView"/>

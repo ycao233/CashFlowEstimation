@@ -125,6 +125,7 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
 
         Fragment cashEstimationFragment;
         Fragment cashflowFragment;
+        Fragment invoiceSummaryFragment;
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -140,11 +141,11 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
                     return cashEstimationFragment;
 
                 case 1:
-                    Fragment fragment = new DummySectionFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-                    fragment.setArguments(args);
-                    return fragment;
+                    if (invoiceSummaryFragment == null) {
+                        invoiceSummaryFragment = new InvoiceSummaryFragment();
+                    }
+                    return invoiceSummaryFragment;
+
                 case 2:
                     if (cashflowFragment == null) {
                         cashflowFragment = new CashFlowsFragment();
@@ -156,7 +157,6 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 3;
         }
 
@@ -172,30 +172,6 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
                     return getString(R.string.title_section3).toUpperCase(l);
             }
             return null;
-        }
-    }
-
-    /**
-     * A dummy fragment representing a section of the app, but that simply
-     * displays dummy text.
-     */
-    public static class DummySectionFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        public static final String ARG_SECTION_NUMBER = "section_number";
-
-        public DummySectionFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main_dummy, container, false);
-            TextView dummyTextView = (TextView) rootView.findViewById(R.id.section_label);
-            dummyTextView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
         }
     }
 
