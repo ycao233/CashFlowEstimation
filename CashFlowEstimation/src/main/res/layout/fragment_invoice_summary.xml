@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:text="New Invoice"
             android:background="@drawable/blue_button"
-            android:id="@+id/button"
+            android:id="@+id/add_invoice_button"
             android:layout_gravity="center|bottom"/>
 
 </LinearLayout>

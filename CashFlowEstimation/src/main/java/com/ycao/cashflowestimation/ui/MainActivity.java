@@ -9,15 +9,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.google.inject.Inject;
 import com.ycao.cashflowestimation.R;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
+import com.ycao.cashflowestimation.ui.fragment.CashFlowsFragment;
+import com.ycao.cashflowestimation.ui.fragment.EstimationFragment;
+import com.ycao.cashflowestimation.ui.fragment.InvoiceSummaryFragment;
 import com.ycao.cashflowestimation.utils.Constants;
 
 import java.util.Locale;
@@ -71,7 +70,6 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
                             .setTabListener(this));
         }
 
-        //dbConn.startCouchbase(getFilesDir().getAbsolutePath());
         sqlConn.open();
         bootstrap();
     }

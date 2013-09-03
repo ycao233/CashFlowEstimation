@@ -1,4 +1,4 @@
-package com.ycao.cashflowestimation.ui;
+package com.ycao.cashflowestimation.ui.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

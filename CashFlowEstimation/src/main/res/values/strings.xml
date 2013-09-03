@@ -7,7 +7,8 @@
     <string name="title_section2">Invoices</string>
     <string name="title_section3">Cash Flows</string>
     <string name="title_activity_setting">Settings</string>
-   <string-array name="schedule_array">
+    <string name="pick_date">Choose Date</string>
+    <string-array name="schedule_array">
         <item>Weekly</item>
         <item>Monthly</item>
         <item>Yearly</item>
