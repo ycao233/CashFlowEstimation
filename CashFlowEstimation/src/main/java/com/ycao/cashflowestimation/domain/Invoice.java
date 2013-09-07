@@ -1,5 +1,11 @@
 package com.ycao.cashflowestimation.domain;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+import com.ycao.cashflowestimation.dal.SQLiteConnector;
+
 import org.joda.time.DateMidnight;
 
 import java.util.ArrayList;
@@ -12,14 +18,13 @@ import java.util.List;
  */
 public class Invoice {
 
+    private final String CLASS_NAME = Invoice.class.getName();
     private long _id;
 
     private String invoiceNumber;
-
     private double credit;
-
     private String vendor;
-
+    private DateMidnight date;
     private List<PaymentInstallment> payments;
 
     public Invoice(String invoiceNumber) {
@@ -92,5 +97,40 @@ public class Invoice {
 
     public void addPayment(PaymentInstallment p) {
         getPayments().add(p);
+    }
+
+    public long persist(SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put(SQLiteConnector.INVOICE_COL_CREDIT, 0);
+        values.put(SQLiteConnector.INVOICE_COL_NUMBER, this.getInvoiceNumber());
+        values.put(SQLiteConnector.INVOICE_COL_VENDOR, this.getVendor());
+        values.put(SQLiteConnector.INVOICE_COL_DATE, this.getVendor());
+
+        long id = -1;
+        if (this.getId() == -1) {
+            id = db.insert(SQLiteConnector.INVOICE_TABLE, null, values);
+            this.setId(id);
+        } else {
+            db.update(SQLiteConnector.INVOICE_TABLE, values, "_id=" + this.getId(), null);
+        }
+        Log.d(CLASS_NAME, "persisted " + this.toString());
+
+        for (PaymentInstallment payment : getPayments()) {
+
+        }
+        return id;
+    }
+
+    public long getId() {
+        return _id;
+    }
+
+    public void setId(long id) {
+        this._id = id;
+    }
+
+    public String toString() {
+        return String.format("invoice number: %s, vendor: %s", this.getInvoiceNumber(),
+                this.getVendor());
     }
 }

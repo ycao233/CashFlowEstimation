@@ -4,15 +4,18 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.inject.Inject;
 import com.ycao.cashflowestimation.R;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
-
-import org.joda.time.DateMidnight;
+import com.ycao.cashflowestimation.domain.Invoice;
 
 import java.util.Calendar;
 
@@ -30,25 +33,77 @@ public class InvoiceActivity extends RoboFragmentActivity {
     @Inject
     SQLiteConnector sqlConn;
 
-    @InjectView(R.id.choose_date_button)
-    private Button datePicker;
+    private Button invDatePicker;
+    private Button dueDatePicker;
+
+    @InjectView(R.id.vendor_edittext)
+    private EditText vendorId;
+
+    @InjectView(R.id.inv_number_edittext)
+    private EditText invNumberInput;
+
+    @InjectView(R.id.due_amount_edittext)
+    private EditText dueAmountInput;
+
+    private Button saveButton;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        invDatePicker = (Button) findViewById(R.id.choose_inv_date_edittext);
+        setupOnClickDatePickerListener(invDatePicker);
 
+        dueDatePicker = (Button) findViewById(R.id.due_date_edittext);
+        setupOnClickDatePickerListener(dueDatePicker);
+
+        saveButton = (Button) findViewById(R.id.save_invoice_button);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validInputs()) {
+                    //TODO: add ability to retrieve existing invoice later on
+                    Invoice invoice = getInvoice();
+
+                } else {
+                    Toast.makeText(InvoiceActivity.this, getString(R.string.invoice_empty_input), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
-    private void setInvoiceDate(String text) {
-        datePicker.setText(text);
+    private Invoice getInvoice() {
+        Invoice invoice = new Invoice(invNumberInput.getText().toString());
+        invoice.setCredit(0);
+        invoice.setVendor(vendorId.getText().toString());
+        return invoice;
     }
 
-    public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "datePicker");
+    private boolean validInputs() {
+        return !(empty(vendorId.getText())
+                || empty(invNumberInput.getText())
+                || empty(dueAmountInput.getText()));
+    }
+
+    private boolean empty(Editable s) {
+        return s == null || s.toString().trim().length() == 0;
+    }
+    private void setupOnClickDatePickerListener(final TextView view) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new DatePickerFragment(view);
+                newFragment.show(getSupportFragmentManager(), "Pick a Date");
+            }
+        });
     }
 
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
+
+        private TextView v;
+
+        public DatePickerFragment(TextView v) {
+            this.v = v;
+        }
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -64,7 +119,7 @@ public class InvoiceActivity extends RoboFragmentActivity {
 
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            ((InvoiceActivity)getActivity()).setInvoiceDate((monthOfYear+1)+"/"+dayOfMonth+"/"+year);
+            v.setText((monthOfYear + 1) + "/" + dayOfMonth + "/" + year);
         }
     }
 }

@@ -8,6 +8,7 @@
     <string name="title_section3">Cash Flows</string>
     <string name="title_activity_setting">Settings</string>
     <string name="pick_date">Choose Date</string>
+    <string name="invoice_empty_input">Please check your input</string>
     <string-array name="schedule_array">
         <item>Weekly</item>
         <item>Monthly</item>

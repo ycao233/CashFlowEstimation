@@ -30,17 +30,20 @@ public class SQLiteConnector extends SQLiteOpenHelper {
     public static final String INVOICE_COL_NUMBER = "INVOICE_NUM";
     public static final String INVOICE_COL_VENDOR = "VENDOR";
     public static final String INVOICE_COL_CREDIT = "CREDIT";
-    public static final List<String> INVOICE_COLUMNS = Arrays.asList(ID, INVOICE_COL_NUMBER, INVOICE_COL_VENDOR, INVOICE_COL_CREDIT);
+    public static final String INVOICE_COL_DATE = "DATE";
+    public static final List<String> INVOICE_COLUMNS = Arrays.asList(ID, INVOICE_COL_NUMBER, INVOICE_COL_VENDOR, INVOICE_COL_CREDIT, INVOICE_COL_DATE);
 
     private static final String CREATE_INVOICE = String.format("create table %s " +
             "(%s integer primary key autoincrement, " +
             "%s text not null UNIQUE, " +
             "%s text not null, " +
+            "%s integer not null, " +
             "%s real);",
             INVOICE_TABLE,
             ID,
             INVOICE_COL_NUMBER,
             INVOICE_COL_VENDOR,
+            INVOICE_COL_DATE,
             INVOICE_COL_CREDIT);
 
     /* payment installment */
