@@ -16,6 +16,10 @@ import com.google.inject.Inject;
 import com.ycao.cashflowestimation.R;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
 import com.ycao.cashflowestimation.domain.Invoice;
+import com.ycao.cashflowestimation.domain.PaymentInstallment;
+
+import org.joda.time.DateMidnight;
+import org.joda.time.format.DateTimeFormat;
 
 import java.util.Calendar;
 
@@ -62,7 +66,8 @@ public class InvoiceActivity extends RoboFragmentActivity {
                 if (validInputs()) {
                     //TODO: add ability to retrieve existing invoice later on
                     Invoice invoice = getInvoice();
-
+                    invoice.persist(sqlConn.getWritableDatabase());
+                    finish();
                 } else {
                     Toast.makeText(InvoiceActivity.this, getString(R.string.invoice_empty_input), Toast.LENGTH_SHORT).show();
                 }
@@ -74,7 +79,16 @@ public class InvoiceActivity extends RoboFragmentActivity {
         Invoice invoice = new Invoice(invNumberInput.getText().toString());
         invoice.setCredit(0);
         invoice.setVendor(vendorId.getText().toString());
+        invoice.setDate(getDate(invDatePicker));
+        PaymentInstallment p = new PaymentInstallment(getDate(dueDatePicker),
+                Double.parseDouble(dueAmountInput.getText().toString()));
+        invoice.addPayment(p);
         return invoice;
+    }
+
+    private DateMidnight getDate(Button dueDatePicker) {
+        String date = dueDatePicker.getText().toString();
+        return DateMidnight.parse(date, DateTimeFormat.forPattern("MM/dd/yyyy"));
     }
 
     private boolean validInputs() {

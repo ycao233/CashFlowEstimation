@@ -76,4 +76,8 @@ public class CashFlowDate {
         return String.format("date: (%s), estimated cash: %(f), total due: %(f)", getDate().toString("dd/MM/yyyy"), getCalculatedCash(), getTotalDue()) +
                 String.format("\ndebug: day of week: (%d), day of month: (%d), day of year: (%d)", getDate().getDayOfWeek(), getDate().getDayOfMonth(), getDate().getDayOfYear());
     }
+
+    public void setInvoices(List<Invoice> invoices) {
+        this.invoices = invoices;
+    }
 }

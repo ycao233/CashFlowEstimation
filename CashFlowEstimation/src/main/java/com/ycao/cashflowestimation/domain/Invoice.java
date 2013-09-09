@@ -1,6 +1,7 @@
 package com.ycao.cashflowestimation.domain;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -9,6 +10,8 @@ import com.ycao.cashflowestimation.dal.SQLiteConnector;
 import org.joda.time.DateMidnight;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,8 +21,8 @@ import java.util.List;
  */
 public class Invoice {
 
-    private final String CLASS_NAME = Invoice.class.getName();
-    private long _id;
+    private final static String CLASS_NAME = Invoice.class.getName();
+    private long _id = -1;
 
     private String invoiceNumber;
     private double credit;
@@ -104,7 +107,7 @@ public class Invoice {
         values.put(SQLiteConnector.INVOICE_COL_CREDIT, 0);
         values.put(SQLiteConnector.INVOICE_COL_NUMBER, this.getInvoiceNumber());
         values.put(SQLiteConnector.INVOICE_COL_VENDOR, this.getVendor());
-        values.put(SQLiteConnector.INVOICE_COL_DATE, this.getVendor());
+        values.put(SQLiteConnector.INVOICE_COL_DATE, this.getDate().getMillis());
 
         long id = -1;
         if (this.getId() == -1) {
@@ -116,9 +119,54 @@ public class Invoice {
         Log.d(CLASS_NAME, "persisted " + this.toString());
 
         for (PaymentInstallment payment : getPayments()) {
-
+            payment.setInvoiceId(id);
+            payment.persist(db);
         }
+
         return id;
+    }
+
+    /**
+     * beging / end inclusive
+     *
+     * @param begin
+     * @param end
+     * @return a list of invoices
+     */
+    public static List<Invoice> getAllInvoiceInRange(SQLiteDatabase db, DateMidnight begin, DateMidnight end) {
+        List<Invoice> rangedInvoice = new LinkedList<Invoice>();
+        String selection = String.format("%s >= ? AND %s <= ?", SQLiteConnector.INVOICE_COL_DATE, SQLiteConnector.INVOICE_COL_DATE);
+        String[] range = new String[]{String.valueOf(begin.getMillis()), String.valueOf(end.getMillis())};
+        Cursor cursor = db.query(SQLiteConnector.INVOICE_TABLE,
+                            SQLiteConnector.INVOICE_COLUMNS.toArray(new String[SQLiteConnector.INVOICE_COLUMNS.size()]),
+                            selection, range, null, null, SQLiteConnector.INVOICE_COL_DATE);
+
+        Log.d(CLASS_NAME, "query by: "+selection+" "+range[0]+" "+range[1] );
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()) {
+            Invoice i = convertFromDBObject(db, cursor);
+            rangedInvoice.add(i);
+            cursor.moveToNext();
+        }
+
+        return rangedInvoice;
+    }
+
+    private static Invoice convertFromDBObject(SQLiteDatabase db, Cursor cursor) {
+        long id = cursor.getLong(0);
+        String invNum = cursor.getString(1);
+        String vendor = cursor.getString(2);
+        DateMidnight invDate = new DateMidnight(cursor.getLong(3));
+        Double credit = cursor.getDouble(4);
+        Invoice i = new Invoice(invNum);
+        i.setId(id);
+        i.setVendor(vendor);
+        i.setDate(invDate);
+        i.setCredit(credit);
+
+        i.getPayments().addAll(PaymentInstallment.getAllPaymentsFor(db, i.getId()));
+        Log.d(CLASS_NAME, "got: "+i);
+        return i;
     }
 
     public long getId() {
@@ -130,7 +178,15 @@ public class Invoice {
     }
 
     public String toString() {
-        return String.format("invoice number: %s, vendor: %s", this.getInvoiceNumber(),
-                this.getVendor());
+        return String.format("%d: invoice number: %s, vendor: %s", this.getId(),
+                this.getInvoiceNumber(), this.getVendor());
+    }
+
+    public DateMidnight getDate() {
+        return date;
+    }
+
+    public void setDate(DateMidnight date) {
+        this.date = date;
     }
 }

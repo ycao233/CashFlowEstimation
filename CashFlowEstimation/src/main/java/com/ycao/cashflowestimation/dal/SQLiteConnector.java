@@ -31,7 +31,7 @@ public class SQLiteConnector extends SQLiteOpenHelper {
     public static final String INVOICE_COL_VENDOR = "VENDOR";
     public static final String INVOICE_COL_CREDIT = "CREDIT";
     public static final String INVOICE_COL_DATE = "DATE";
-    public static final List<String> INVOICE_COLUMNS = Arrays.asList(ID, INVOICE_COL_NUMBER, INVOICE_COL_VENDOR, INVOICE_COL_CREDIT, INVOICE_COL_DATE);
+    public static final List<String> INVOICE_COLUMNS = Arrays.asList(ID, INVOICE_COL_NUMBER, INVOICE_COL_VENDOR, INVOICE_COL_DATE, INVOICE_COL_CREDIT);
 
     private static final String CREATE_INVOICE = String.format("create table %s " +
             "(%s integer primary key autoincrement, " +
@@ -45,6 +45,9 @@ public class SQLiteConnector extends SQLiteOpenHelper {
             INVOICE_COL_VENDOR,
             INVOICE_COL_DATE,
             INVOICE_COL_CREDIT);
+    private static final String CREATE_INVOICE_TABLE_INDEX = String.format("CREATE INDEX invoice_date_idx on %s(%s);",
+            INVOICE_TABLE,
+            INVOICE_COL_DATE);
 
     /* payment installment */
     public static final String PAYMENT_INSTALLMENT_TABLE = "PAYMENT_INSTALLMENT";
@@ -68,6 +71,9 @@ public class SQLiteConnector extends SQLiteOpenHelper {
             PI_COL_AMOUNT_DUE,
             PI_COL_PAID,
             PI_COL_INVOICE_ID, INVOICE_TABLE, ID);
+    private static final String CREATE_PI_TABLE_INDEX = String.format("CREATE INDEX fk_inv_id_idx on %s(%s);",
+            PAYMENT_INSTALLMENT_TABLE,
+            PI_COL_INVOICE_ID);
 
     /* recurring cashflow */
     public static final String RECURRENT_CASH_FLOW_TABLE = "RECUR_FLOW_TABLE";
@@ -97,8 +103,15 @@ public class SQLiteConnector extends SQLiteOpenHelper {
         Log.i(CLASS_NAME, "Creating sqlite databases.");
         db.execSQL(CREATE_INVOICE);
         Log.i(CLASS_NAME, "Created invoice table with sql cmd: " + CREATE_INVOICE);
+        db.execSQL(CREATE_INVOICE_TABLE_INDEX);
+        Log.i(CLASS_NAME, "Created invoice table index with sql cmd: " + CREATE_INVOICE_TABLE_INDEX);
+
         db.execSQL(CREATE_PAYMENT_INSTALLMENT);
         Log.i(CLASS_NAME, "Created payment intallment table with sql cmd: " + CREATE_PAYMENT_INSTALLMENT);
+        db.execSQL(CREATE_PI_TABLE_INDEX);
+        Log.i(CLASS_NAME, "Created payment intallment table index sql cmd: " + CREATE_PI_TABLE_INDEX);
+
+
         db.execSQL(CREATE_RECURRENT_CASH_FLOW);
         Log.i(CLASS_NAME, "Created recurrent cash flow table with sql cmd: " + CREATE_RECURRENT_CASH_FLOW);
     }
