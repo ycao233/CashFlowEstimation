@@ -2,4 +2,10 @@
 <resources>
     <color name="light_blue">#CEECF5</color>
     <color name="platinum">#E5E4E2</color>
+    <color name="theme">#FBB917</color>
+    <color name="theme_sep">#C98700</color>
+    <color name="text">#1E1E1E</color>
+    <color name="edit_text_background">#F8F8F8</color>
+    <color name="edit_text_inner">#EDEDED</color>
+    <color name="edit_text_outer">#959595</color>
 </resources>

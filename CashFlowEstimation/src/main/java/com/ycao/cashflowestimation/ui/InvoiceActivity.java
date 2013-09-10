@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -50,14 +51,24 @@ public class InvoiceActivity extends RoboFragmentActivity {
     private EditText dueAmountInput;
 
     private Button saveButton;
+    private Button cancelButton;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         invDatePicker = (Button) findViewById(R.id.choose_inv_date_edittext);
         setupOnClickDatePickerListener(invDatePicker);
 
         dueDatePicker = (Button) findViewById(R.id.due_date_edittext);
         setupOnClickDatePickerListener(dueDatePicker);
+
+        cancelButton = (Button) findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         saveButton = (Button) findViewById(R.id.save_invoice_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
