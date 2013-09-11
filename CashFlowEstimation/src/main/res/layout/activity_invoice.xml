@@ -12,25 +12,25 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:background="@color/theme"
+        android:layout_height="40dp">
 
         <Button
             android:layout_weight="5"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="\u2717 Cancel"
+            android:layout_height="match_parent"
             android:background="@color/theme"
+            android:text="\u2717 Cancel"
             android:id="@+id/cancel_button"/>
         <View
             android:layout_width="1dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="3dp"
-            android:layout_height="match_parent"
-            android:background="@color/platinum"/>
+            android:layout_height="26dp"
+            android:layout_marginTop="7dp"
+            android:background="@color/theme_sep"/>
         <Button
             android:layout_weight="5"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:text="\u2714 Save"
             android:background="@color/theme"
             android:id="@+id/save_invoice_button"

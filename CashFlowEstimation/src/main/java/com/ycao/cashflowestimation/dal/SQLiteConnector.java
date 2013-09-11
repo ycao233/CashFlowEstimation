@@ -35,7 +35,7 @@ public class SQLiteConnector extends SQLiteOpenHelper {
 
     private static final String CREATE_INVOICE = String.format("create table %s " +
             "(%s integer primary key autoincrement, " +
-            "%s text not null UNIQUE, " +
+            "%s text not null, " +
             "%s text not null, " +
             "%s integer not null, " +
             "%s real);",
@@ -45,9 +45,13 @@ public class SQLiteConnector extends SQLiteOpenHelper {
             INVOICE_COL_VENDOR,
             INVOICE_COL_DATE,
             INVOICE_COL_CREDIT);
-    private static final String CREATE_INVOICE_TABLE_INDEX = String.format("CREATE INDEX invoice_date_idx on %s(%s);",
+    private static final String CREATE_INVOICE_TABLE_INDEX_ON_DATE = String.format("CREATE INDEX invoice_date_idx on %s(%s);",
             INVOICE_TABLE,
             INVOICE_COL_DATE);
+    private static final String CREATE_INVOICE_TABLE_INDEX_ON_VENDOR_INV_NUM = String.format("CREATE UNIQUE INDEX ven_inv_idx on %s(%s, %s);",
+            INVOICE_TABLE,
+            INVOICE_COL_VENDOR,
+            INVOICE_COL_NUMBER);
 
     /* payment installment */
     public static final String PAYMENT_INSTALLMENT_TABLE = "PAYMENT_INSTALLMENT";
@@ -103,8 +107,10 @@ public class SQLiteConnector extends SQLiteOpenHelper {
         Log.i(CLASS_NAME, "Creating sqlite databases.");
         db.execSQL(CREATE_INVOICE);
         Log.i(CLASS_NAME, "Created invoice table with sql cmd: " + CREATE_INVOICE);
-        db.execSQL(CREATE_INVOICE_TABLE_INDEX);
-        Log.i(CLASS_NAME, "Created invoice table index with sql cmd: " + CREATE_INVOICE_TABLE_INDEX);
+        db.execSQL(CREATE_INVOICE_TABLE_INDEX_ON_DATE);
+        Log.i(CLASS_NAME, "Created invoice table index with sql cmd: " + CREATE_INVOICE_TABLE_INDEX_ON_DATE);
+        db.execSQL(CREATE_INVOICE_TABLE_INDEX_ON_VENDOR_INV_NUM);
+        Log.i(CLASS_NAME, "Created invoice table index with sql cmd: " + CREATE_INVOICE_TABLE_INDEX_ON_VENDOR_INV_NUM);
 
         db.execSQL(CREATE_PAYMENT_INSTALLMENT);
         Log.i(CLASS_NAME, "Created payment intallment table with sql cmd: " + CREATE_PAYMENT_INSTALLMENT);

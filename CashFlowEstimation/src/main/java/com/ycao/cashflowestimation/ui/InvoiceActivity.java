@@ -3,6 +3,7 @@ package com.ycao.cashflowestimation.ui;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.view.View;
@@ -50,11 +51,16 @@ public class InvoiceActivity extends RoboFragmentActivity {
     @InjectView(R.id.due_amount_edittext)
     private EditText dueAmountInput;
 
+    private Vibrator vibrator;
+
     private Button saveButton;
     private Button cancelButton;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
+
+        getActionBar().hide();
 
         invDatePicker = (Button) findViewById(R.id.choose_inv_date_edittext);
         setupOnClickDatePickerListener(invDatePicker);

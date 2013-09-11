@@ -3,7 +3,9 @@ package com.ycao.cashflowestimation.ui;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -29,16 +31,18 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboFragmentActivity implements ActionBar.TabListener {
 
-    @Inject SQLiteConnector sqlConn;
+    private static final String CLASS_NAME = MainActivity.class.getName();
+
+    @Inject
+    private SQLiteConnector sqlConn;
 
     // Create the adapter that will return a fragment for each of the three
     // primary sections of the app.
-    SectionsPagerAdapter mSectionsPagerAdapter;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
 
     // Set up the ViewPager with the sections adapter.
-    @InjectView(R.id.pager) ViewPager mViewPager;
-
-    public static final String CLASS_NAME = MainActivity.class.getName();
+    @InjectView(R.id.pager)
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,8 @@ public class MainActivity extends RoboFragmentActivity implements ActionBar.TabL
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(false);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
