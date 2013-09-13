@@ -98,6 +98,15 @@ public class Invoice {
         return due;
     }
 
+    public double getTotalDue() {
+        double total = 0;
+        for (PaymentInstallment p : getPayments()) {
+            total += p.getAmountDue();
+        }
+
+        return total;
+    }
+
     public void addPayment(PaymentInstallment p) {
         getPayments().add(p);
     }
@@ -135,13 +144,14 @@ public class Invoice {
      */
     public static List<Invoice> getAllInvoiceInRange(SQLiteDatabase db, DateMidnight begin, DateMidnight end) {
         List<Invoice> rangedInvoice = new LinkedList<Invoice>();
-        String selection = String.format("%s >= ? AND %s <= ?", SQLiteConnector.INVOICE_COL_DATE, SQLiteConnector.INVOICE_COL_DATE);
-        String[] range = new String[]{String.valueOf(begin.getMillis()), String.valueOf(end.getMillis())};
+
+        String selection = (begin == null && end == null) ? null :  String.format("%s >= ? AND %s <= ?", SQLiteConnector.INVOICE_COL_DATE, SQLiteConnector.INVOICE_COL_DATE);
+        String[] range = (begin == null && end == null) ? null : new String[]{String.valueOf(begin.getMillis()), String.valueOf(end.getMillis())};
         Cursor cursor = db.query(SQLiteConnector.INVOICE_TABLE,
                             SQLiteConnector.INVOICE_COLUMNS.toArray(new String[SQLiteConnector.INVOICE_COLUMNS.size()]),
                             selection, range, null, null, SQLiteConnector.INVOICE_COL_DATE);
 
-        Log.d(CLASS_NAME, "query by: "+selection+" "+range[0]+" "+range[1] );
+        Log.d(CLASS_NAME, "query by: "+selection+" and range: "+range);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
             Invoice i = convertFromDBObject(db, cursor);

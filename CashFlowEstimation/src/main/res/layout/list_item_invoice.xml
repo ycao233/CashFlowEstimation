@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="90dp"
+        android:id="@+id/invoice_imageview"
+        android:background="@drawable/invoice_ico"
+        android:layout_alignParentLeft="true"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"/>
+
+    <TextView
+        style="@style/HeaderTitleText"
+        android:paddingLeft="0dp"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Vendor"
+        android:id="@+id/vendor_name_textview"
+        android:layout_alignTop="@id/invoice_imageview"
+        android:layout_toLeftOf="@+id/duedate_textview"
+        android:layout_toRightOf="@id/invoice_imageview" />
+
+    <TextView
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Invoice Number"
+        android:textSize="18dp"
+        android:id="@+id/invoice_num_textview"
+        android:layout_toRightOf="@id/invoice_imageview"
+        android:layout_below="@id/vendor_name_textview"/>
+
+    <TextView
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="$17582.24"
+        android:textColor="@android:color/holo_red_light"
+        android:id="@+id/invoice_amount_textview"
+        android:layout_alignBottom="@+id/invoice_imageview"
+        android:layout_toRightOf="@+id/invoice_imageview" />
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:text="10/22/2013"
+        android:id="@id/duedate_textview"
+        android:gravity="top|right"
+        android:layout_above="@id/invoice_num_textview"
+        android:layout_alignParentRight="true"/>
+
+    <View
+        android:layout_below="@id/invoice_imageview"
+        style="@style/Separator"/>
+</RelativeLayout>

@@ -19,29 +19,24 @@
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/add_invoice_button"
             android:paddingRight="5dp"/>
-        <View
-            android:layout_width="1dp"
-            android:layout_height="36dp"
-            android:layout_marginTop="7dp"
-            android:background="@color/theme_sep"
-            android:layout_toLeftOf="@id/add_invoice_button"/>
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/plus"
-            android:textSize="25dp"
+            android:text="+"
+            android:textSize="35dp"
             android:background="@drawable/theme_button"
             android:layout_gravity="center"
             android:layout_alignParentRight="true"
             android:id="@+id/add_invoice_button"/>
-
     </RelativeLayout>
 
 
     <ListView
-        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:id="@+id/invoices_listView"/>
+        android:layout_height="match_parent"
+        android:id="@+id/invoices_listView"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 
 </LinearLayout>

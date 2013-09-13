@@ -36,8 +36,11 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.activity_invoice)
 public class InvoiceActivity extends RoboFragmentActivity {
 
+    public static int CANCELLED = 0;
+    public static int CREATED = 1;
+
     @Inject
-    SQLiteConnector sqlConn;
+    private SQLiteConnector sqlConn;
 
     private Button invDatePicker;
     private Button dueDatePicker;
@@ -72,6 +75,7 @@ public class InvoiceActivity extends RoboFragmentActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setResult(CANCELLED);
                 finish();
             }
         });
@@ -83,8 +87,13 @@ public class InvoiceActivity extends RoboFragmentActivity {
                 if (validInputs()) {
                     //TODO: add ability to retrieve existing invoice later on
                     Invoice invoice = getInvoice();
-                    invoice.persist(sqlConn.getWritableDatabase());
-                    finish();
+                    long id = invoice.persist(sqlConn.getWritableDatabase());
+                    if (id == -1) {
+                        Toast.makeText(InvoiceActivity.this, getString(R.string.invoice_empty_input), Toast.LENGTH_SHORT).show();
+                    } else {
+                        setResult(CREATED);
+                        finish();
+                    }
                 } else {
                     Toast.makeText(InvoiceActivity.this, getString(R.string.invoice_empty_input), Toast.LENGTH_SHORT).show();
                 }

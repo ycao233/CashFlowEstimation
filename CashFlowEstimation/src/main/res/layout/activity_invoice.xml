@@ -19,7 +19,7 @@
             android:layout_weight="5"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@color/theme"
+            android:background="@drawable/theme_button"
             android:text="\u2717 Cancel"
             android:id="@+id/cancel_button"/>
         <View
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="\u2714 Save"
-            android:background="@color/theme"
+            android:background="@drawable/theme_button"
             android:id="@+id/save_invoice_button"
             android:layout_gravity="center"/>
     </LinearLayout>
@@ -48,82 +48,93 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/v_header_separator" >
-    <!-- actuall stuff -->
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
-
-        <TextView
-            style="@style/HeaderTitleText"
-            android:text="Vendor"/>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/FormalSingleLineEditText"
-            android:id="@+id/vendor_edittext"/>
-
-        <TextView
-            android:paddingTop="15dp"
-            android:text="Invoice Number"
-            style="@style/HeaderTitleText"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/FormalSingleLineEditText"
-            android:id="@+id/inv_number_edittext"/>
-
+        android:layout_below="@id/v_header_separator">
+        <!-- actuall stuff -->
         <LinearLayout
-            android:paddingTop="25dp"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+
             <TextView
-                android:text="Invoice Date"
-                style="@style/HeaderTitleText"/>
-            <Button
-                style="@style/FormalSingleLineEditText"
-                android:inputType="none"
+                style="@style/HeaderTitleText"
+                android:text="Vendor"/>
+
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="(MM/DD/YYYY)"
-                android:id="@+id/choose_inv_date_edittext"/>
+                style="@style/FormalSingleLineEditText"
+                android:id="@+id/vendor_edittext"/>
+
+            <TextView
+                android:paddingTop="15dp"
+                android:text="Invoice Number"
+                style="@style/HeaderTitleText"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/FormalSingleLineEditText"
+                android:id="@+id/inv_number_edittext"/>
+
+            <LinearLayout
+                android:paddingTop="25dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="Invoice Date"
+                    style="@style/HeaderTitleText"/>
+                <Button
+                    style="@style/FormalSingleLineEditText"
+                    android:inputType="none"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="(MM/DD/YYYY)"
+                    android:id="@+id/choose_inv_date_edittext"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:paddingTop="25dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    style="@style/HeaderTitleText"
+                    android:text="Due Date"/>
+                <Button
+                    style="@style/FormalSingleLineEditText"
+                    android:inputType="none"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="(MM/DD/YYYY)"
+                    android:id="@+id/due_date_edittext"/>
+
+            </LinearLayout>
+            <TextView
+                style="@style/HeaderTitleText"
+                android:text="Due Amount"
+                android:paddingTop="15dip"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                style="@style/FormalSingleLineEditText"
+                android:id="@+id/due_amount_edittext"/>
+
+            <TextView
+                style="@style/HeaderTitleText"
+                android:text="Notes"
+                android:paddingTop="15dip"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:gravity="top|left"
+                android:inputType="textMultiLine"
+                android:id="@+id/note_edittext"
+                android:layout_marginBottom="20dp"/>
         </LinearLayout>
-
-        <LinearLayout
-            android:paddingTop="25dp"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <TextView
-            style="@style/HeaderTitleText"
-            android:text="Due Date"/>
-        <Button
-            style="@style/FormalSingleLineEditText"
-            android:inputType="none"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="(MM/DD/YYYY)"
-            android:id="@+id/due_date_edittext"/>
-
-        </LinearLayout>
-        <TextView
-            style="@style/HeaderTitleText"
-            android:text="Due Amount"
-            android:paddingTop="15dip"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            style="@style/FormalSingleLineEditText"
-            android:id="@+id/due_amount_edittext"/>
-
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
 
 </LinearLayout>
