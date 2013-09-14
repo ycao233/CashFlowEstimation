@@ -1,4 +1,7 @@
-package com.ycao.cashflowestimation.domain;
+package com.ycao.cashflowestimation.core;
+
+import com.ycao.cashflowestimation.domain.Invoice;
+import com.ycao.cashflowestimation.domain.PaymentInstallment;
 
 import org.joda.time.DateMidnight;
 
@@ -61,7 +64,7 @@ public class CashFlowDate {
         return invoices;
     }
 
-    public double getTotalDue() {
+    public double getTotalDueOnThisDay() {
         double total = 0;
         for(Invoice invoice : getInvoices()) {
             for (PaymentInstallment p : invoice.getPaymentDueOn(getDate())) {
@@ -73,7 +76,7 @@ public class CashFlowDate {
     }
 
     public String toString() {
-        return String.format("date: (%s), estimated cash: %(f), total due: %(f)", getDate().toString("dd/MM/yyyy"), getCalculatedCash(), getTotalDue()) +
+        return String.format("date: (%s), estimated cash: %(f), total due: %(f)", getDate().toString("dd/MM/yyyy"), getCalculatedCash(), getTotalDueOnThisDay()) +
                 String.format("\ndebug: day of week: (%d), day of month: (%d), day of year: (%d)", getDate().getDayOfWeek(), getDate().getDayOfMonth(), getDate().getDayOfYear());
     }
 

@@ -39,7 +39,7 @@ public class CashFlowsFragment extends RoboFragment {
         weekdayIncome.setText(String.valueOf(settings.getFloat(Constants.WEEKDAY_INCOME, Constants.WEEKDAY_INCOME_DEFAULT)));
         weekendIncome.setText(String.valueOf(settings.getFloat(Constants.WEEKEND_INCOME, Constants.WEEKEND_INCOME_DEFAULT)));
 
-        List<RecurrentCashFlow> allOutFlow = RecurrentCashFlow.getAllRecurrentCashFlow(sqlConn.getWritableDatabase());
+        List<RecurrentCashFlow> allOutFlow = RecurrentCashFlow.getAccessor().getAllRecurrentCashFlow(sqlConn);
         final ListView outflow = (ListView) view.findViewById(R.id.recurrent_cashflow_list);
         outflow.setAdapter(new RecurrentCashFlowListAdapter(getActivity(), allOutFlow));
 
@@ -55,7 +55,7 @@ public class CashFlowsFragment extends RoboFragment {
 
                 List<RecurrentCashFlow> cashflows = ((RecurrentCashFlowListAdapter) outflow.getAdapter()).getOutflows();
                 for (RecurrentCashFlow cashflow : cashflows) {
-                    cashflow.persist(sqlConn.getWritableDatabase());
+                    cashflow.persist(sqlConn);
                 }
 
                 getActivity().getActionBar().setSelectedNavigationItem(0);

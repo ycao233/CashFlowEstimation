@@ -3,20 +3,23 @@ package com.ycao.cashflowestimation.domain;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by ycao on 7/27/13.
  */
-public class RecurrentCashFlow {
+public class RecurrentCashFlow extends Entity {
 
     private static final String CLASS_NAME = RecurrentCashFlow.class.getName();
+    private static final RecurrentCashFlow accessor = new RecurrentCashFlow();
+
+    public static RecurrentCashFlow getAccessor() {
+        return accessor;
+    }
 
     /**
      * payment schedule
@@ -39,13 +42,6 @@ public class RecurrentCashFlow {
     private Schedule schedule;
     private double amount;
     private String description;
-    private long _id = -1;
-
-    public RecurrentCashFlow(Schedule schedule, double amount, String description) {
-        this.setSchedule(schedule);
-        this.setAmount(amount);
-        this.setDescription(description);
-    }
 
     public Schedule getSchedule() {
         return schedule;
@@ -63,14 +59,6 @@ public class RecurrentCashFlow {
         this.description = description;
     }
 
-    public long getId() {
-        return _id;
-    }
-
-    public void setId(long _id) {
-        this._id = _id;
-    }
-
     public void setSchedule(Schedule schedule) {
         this.schedule = schedule;
     }
@@ -79,45 +67,45 @@ public class RecurrentCashFlow {
         this.amount = amount;
     }
 
-    public long persist(SQLiteDatabase db) {
+    @Override
+    protected String getTableName() {
+        return SQLiteConnector.RECURRENT_CASH_FLOW_TABLE;
+    }
+
+    @Override
+    protected String[] getColumns() {
+        return SQLiteConnector.RCFT_COLUMNS.toArray(new String[SQLiteConnector.RCFT_COLUMNS.size()]);
+    }
+
+    @Override
+    protected String getLogName() {
+        return this.CLASS_NAME;
+    }
+
+    @Override
+    protected ContentValues getContentValues(SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         values.put(SQLiteConnector.RCFT_COL_SCHEDULE, this.getSchedule().toString());
         values.put(SQLiteConnector.RCFT_COL_AMOUNT, this.getAmount());
         values.put(SQLiteConnector.RCFT_COL_DESCRIPTION, this.getDescription());
-
-        long id = -1;
-        if (this.getId() == -1) {
-            id = db.insert(SQLiteConnector.RECURRENT_CASH_FLOW_TABLE, null, values);
-            this.setId(id);
-        } else {
-            db.update(SQLiteConnector.RECURRENT_CASH_FLOW_TABLE, values, "_id="+this.getId(), null);
-        }
-        Log.d(CLASS_NAME, "persisted " + this.toString());
-        return id;
+        return values;
     }
 
-    public static List<RecurrentCashFlow> getAllRecurrentCashFlow(SQLiteDatabase db) {
-        List<RecurrentCashFlow> all = new ArrayList<RecurrentCashFlow>();
-        Cursor cursor = db.query(SQLiteConnector.RECURRENT_CASH_FLOW_TABLE,
-                            SQLiteConnector.RCFT_COLUMNS.toArray(new String[SQLiteConnector.RCFT_COLUMNS.size()]),
-                            null, null, null, null, null);
-
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
-            RecurrentCashFlow cashFlow = convertFromDBObject(cursor);
-            all.add(cashFlow);
-            cursor.moveToNext();
-        }
-
+    public List<RecurrentCashFlow> getAllRecurrentCashFlow(SQLiteConnector dbConn) {
+        List<RecurrentCashFlow> all = getBySelection(dbConn, null, null, null);
         return all;
     }
 
-    private static RecurrentCashFlow convertFromDBObject(Cursor cursor) {
+    @Override
+    protected RecurrentCashFlow convertFromDBObject(SQLiteDatabase db, Cursor cursor) {
         long id = cursor.getLong(0);
         String description = cursor.getString(1);
         Schedule schedule = Schedule.valueOf(cursor.getString(2));
         Double amount = cursor.getDouble(3);
-        RecurrentCashFlow flow = new RecurrentCashFlow(schedule, amount, description);
+        RecurrentCashFlow flow = new RecurrentCashFlow();
+        flow.setSchedule(schedule);
+        flow.setAmount(amount);
+        flow.setDescription(description);
         flow.setId(id);
 
         return flow;

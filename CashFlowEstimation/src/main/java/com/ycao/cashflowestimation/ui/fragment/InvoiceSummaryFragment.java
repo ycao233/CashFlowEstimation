@@ -48,7 +48,7 @@ public class InvoiceSummaryFragment extends RoboFragment {
         });
 
         final ListView invoiceList = (ListView) view.findViewById(R.id.invoices_listView);
-        invoiceListAdapter = new InvoiceListAdapter(getActivity(), Invoice.getAllInvoiceInRange(sqlConn.getReadableDatabase(), null, null));
+        invoiceListAdapter = new InvoiceListAdapter(getActivity(), Invoice.getAccessor().getAllInvoiceInRange(sqlConn, null, null));
         invoiceList.setAdapter(invoiceListAdapter);
         return view;
     }

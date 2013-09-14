@@ -2,6 +2,7 @@ package com.ycao.cashflowestimation.ui;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.DialogFragment;
@@ -87,11 +88,14 @@ public class InvoiceActivity extends RoboFragmentActivity {
                 if (validInputs()) {
                     //TODO: add ability to retrieve existing invoice later on
                     Invoice invoice = getInvoice();
-                    long id = invoice.persist(sqlConn.getWritableDatabase());
+                    long id = invoice.persist(sqlConn);
                     if (id == -1) {
                         Toast.makeText(InvoiceActivity.this, getString(R.string.invoice_empty_input), Toast.LENGTH_SHORT).show();
                     } else {
-                        setResult(CREATED);
+                        /* TODO */
+                        Intent result = new Intent();
+                        result.putExtra("_id", id);
+                        setResult(CREATED, result);
                         finish();
                     }
                 } else {
@@ -102,12 +106,14 @@ public class InvoiceActivity extends RoboFragmentActivity {
     }
 
     private Invoice getInvoice() {
-        Invoice invoice = new Invoice(invNumberInput.getText().toString());
+        Invoice invoice = new Invoice();
+        invoice.setInvoiceNumber(invNumberInput.getText().toString());
         invoice.setCredit(0);
         invoice.setVendor(vendorId.getText().toString());
         invoice.setDate(getDate(invDatePicker));
-        PaymentInstallment p = new PaymentInstallment(getDate(dueDatePicker),
-                Double.parseDouble(dueAmountInput.getText().toString()));
+        PaymentInstallment p = new PaymentInstallment();
+        p.setDueDate(getDate(dueDatePicker));
+        p.setAmountDue(Double.parseDouble(dueAmountInput.getText().toString()));
         invoice.addPayment(p);
         return invoice;
     }

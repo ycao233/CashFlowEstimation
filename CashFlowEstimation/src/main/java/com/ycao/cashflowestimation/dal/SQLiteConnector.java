@@ -132,14 +132,18 @@ public class SQLiteConnector extends SQLiteOpenHelper {
     }
 
     public void bootstrapData() {
-        RecurrentCashFlow salary = new RecurrentCashFlow(RecurrentCashFlow.Schedule.WEEKLY, 300 * 7, "salary");
-        salary.persist(this.getWritableDatabase());
-        RecurrentCashFlow rent = new RecurrentCashFlow(RecurrentCashFlow.Schedule.MONTHLY, 250 * 30, "rent");
-        rent.persist(this.getWritableDatabase());
-        RecurrentCashFlow bonus = new RecurrentCashFlow(RecurrentCashFlow.Schedule.WEEKLY, 300 * 7, "bonus");
-        bonus.persist(this.getWritableDatabase());
-        RecurrentCashFlow tax = new RecurrentCashFlow(RecurrentCashFlow.Schedule.YEARLY, 400 * 365, "tax");
-        tax.persist(this.getWritableDatabase());
+        createRecurrentFlow(RecurrentCashFlow.Schedule.WEEKLY, 300 * 7, "Salary");
+        createRecurrentFlow(RecurrentCashFlow.Schedule.MONTHLY, 250 * 30, "Rent");
+        createRecurrentFlow(RecurrentCashFlow.Schedule.WEEKLY, 300 * 7, "bonus");
+        createRecurrentFlow(RecurrentCashFlow.Schedule.YEARLY, 400 * 365, "tax");
+    }
+
+    private void createRecurrentFlow(RecurrentCashFlow.Schedule schedule, double amount, String desc) {
+        RecurrentCashFlow flow = new RecurrentCashFlow();
+        flow.setSchedule(schedule);
+        flow.setAmount(amount);
+        flow.setDescription(desc);
+        flow.persist(this);
     }
 
     @Override

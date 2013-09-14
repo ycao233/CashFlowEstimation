@@ -1,13 +1,9 @@
 package com.ycao.cashflowestimation.core;
 
-import android.util.Log;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
-import com.ycao.cashflowestimation.domain.CashFlowDate;
 import com.ycao.cashflowestimation.domain.Invoice;
-import com.ycao.cashflowestimation.domain.PaymentInstallment;
 import com.ycao.cashflowestimation.domain.RecurrentCashFlow;
 
 import org.joda.time.DateMidnight;
@@ -29,14 +25,14 @@ public class CashFlowEstimator {
     private float weekendIncome;
 
     public CashFlowDate getNextCashFlowDate(CashFlowDate date) {
-        List<Invoice> invoices = Invoice.getAllInvoiceInRange(sqlConn.getWritableDatabase(), date.getDate(), date.getDate());
+        List<Invoice> invoices = Invoice.getAccessor().getAllInvoiceInRange(sqlConn, date.getDate(), date.getDate());
         return getNextCashFlowDate(date, getRecurrentExpense(), invoices);
     }
 
     public List<CashFlowDate> getSubsequentDates(CashFlowDate start, int numOfDays, boolean inclusive) {
         List<CashFlowDate> dates = new LinkedList<CashFlowDate>();
         Expense expense = getRecurrentExpense();
-        List<Invoice> invoices = Invoice.getAllInvoiceInRange(sqlConn.getWritableDatabase(), start.getDate(), start.getDate().plusDays(numOfDays));
+        List<Invoice> invoices = Invoice.getAccessor().getAllInvoiceInRange(sqlConn, start.getDate(), start.getDate().plusDays(numOfDays));
         CashFlowDate curr = start;
         while (numOfDays-- > 0) {
             curr = getNextCashFlowDate(curr, expense, invoices);
@@ -51,7 +47,7 @@ public class CashFlowEstimator {
     }
 
     private Expense getRecurrentExpense() {
-        List<RecurrentCashFlow> allOutFlow = RecurrentCashFlow.getAllRecurrentCashFlow(sqlConn.getWritableDatabase());
+        List<RecurrentCashFlow> allOutFlow = RecurrentCashFlow.getAccessor().getAllRecurrentCashFlow(sqlConn);
         float weeklyExpense = getExpenses(allOutFlow, RecurrentCashFlow.Schedule.WEEKLY);
         float monthlyExpense = getExpenses(allOutFlow, RecurrentCashFlow.Schedule.MONTHLY);
         float yearlyExpense = getExpenses(allOutFlow, RecurrentCashFlow.Schedule.YEARLY);
@@ -83,7 +79,7 @@ public class CashFlowEstimator {
             cash -= expense.getYearlyExpense();
         }
 
-        cash -= nextDay.getTotalDue();
+        cash -= nextDay.getTotalDueOnThisDay();
 
         nextDay.setCalculatedCash(cash);
         return nextDay;
@@ -119,7 +115,7 @@ public class CashFlowEstimator {
 
         Expense expense = getRecurrentExpense();
         CashFlowDate curr = past;
-        List<Invoice> invoices = Invoice.getAllInvoiceInRange(sqlConn.getWritableDatabase(), past.getDate(), today);
+        List<Invoice> invoices = Invoice.getAccessor().getAllInvoiceInRange(sqlConn, past.getDate(), today);
         while (curr.getDate().isBefore(today)) {
             curr = getNextCashFlowDate(curr, expense, invoices);
         }

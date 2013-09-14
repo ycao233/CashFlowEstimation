@@ -10,8 +10,6 @@ import com.ycao.cashflowestimation.dal.SQLiteConnector;
 import org.joda.time.DateMidnight;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -19,20 +17,19 @@ import java.util.List;
  *
  * Created by ycao on 7/27/13.
  */
-public class Invoice {
+public class Invoice extends Entity {
 
     private final static String CLASS_NAME = Invoice.class.getName();
-    private long _id = -1;
+    private final static Invoice accessor = new Invoice();
 
     private String invoiceNumber;
     private double credit;
     private String vendor;
     private DateMidnight date;
-    private List<PaymentInstallment> payments;
+    private List<PaymentInstallment> payments = new ArrayList<PaymentInstallment>();
 
-    public Invoice(String invoiceNumber) {
-        this.invoiceNumber = invoiceNumber;
-        payments = new ArrayList<PaymentInstallment>();
+    public static Invoice getAccessor() {
+        return accessor;
     }
 
     /**
@@ -64,6 +61,14 @@ public class Invoice {
         this.vendor = vendor;
     }
 
+    public DateMidnight getDate() {
+        return date;
+    }
+
+    public void setDate(DateMidnight date) {
+        this.date = date;
+    }
+
     /**
      * paid?
      */
@@ -90,7 +95,7 @@ public class Invoice {
     public List<PaymentInstallment> getPaymentDueOn(DateMidnight date) {
         List<PaymentInstallment> due = new ArrayList<PaymentInstallment>();
         for (PaymentInstallment p : getPayments()) {
-            if (p.getDate().equals(date)) {
+            if (p.getDueDate().equals(date)) {
                 due.add(p);
             }
         }
@@ -111,80 +116,41 @@ public class Invoice {
         getPayments().add(p);
     }
 
-    public long persist(SQLiteDatabase db) {
-        ContentValues values = new ContentValues();
-        values.put(SQLiteConnector.INVOICE_COL_CREDIT, 0);
-        values.put(SQLiteConnector.INVOICE_COL_NUMBER, this.getInvoiceNumber());
-        values.put(SQLiteConnector.INVOICE_COL_VENDOR, this.getVendor());
-        values.put(SQLiteConnector.INVOICE_COL_DATE, this.getDate().getMillis());
-
-        long id = -1;
-        if (this.getId() == -1) {
-            id = db.insert(SQLiteConnector.INVOICE_TABLE, null, values);
-            this.setId(id);
-        } else {
-            db.update(SQLiteConnector.INVOICE_TABLE, values, "_id=" + this.getId(), null);
-        }
-        Log.d(CLASS_NAME, "persisted " + this.toString());
-
-        for (PaymentInstallment payment : getPayments()) {
-            payment.setInvoiceId(id);
-            payment.persist(db);
-        }
-
-        return id;
-    }
 
     /**
      * beging / end inclusive
      *
+     *
+     * @param dbConn
      * @param begin
      * @param end
      * @return a list of invoices
      */
-    public static List<Invoice> getAllInvoiceInRange(SQLiteDatabase db, DateMidnight begin, DateMidnight end) {
-        List<Invoice> rangedInvoice = new LinkedList<Invoice>();
+    public List<Invoice> getAllInvoiceInRange(SQLiteConnector dbConn, DateMidnight begin, DateMidnight end) {
 
         String selection = (begin == null && end == null) ? null :  String.format("%s >= ? AND %s <= ?", SQLiteConnector.INVOICE_COL_DATE, SQLiteConnector.INVOICE_COL_DATE);
         String[] range = (begin == null && end == null) ? null : new String[]{String.valueOf(begin.getMillis()), String.valueOf(end.getMillis())};
-        Cursor cursor = db.query(SQLiteConnector.INVOICE_TABLE,
-                            SQLiteConnector.INVOICE_COLUMNS.toArray(new String[SQLiteConnector.INVOICE_COLUMNS.size()]),
-                            selection, range, null, null, SQLiteConnector.INVOICE_COL_DATE);
-
-        Log.d(CLASS_NAME, "query by: "+selection+" and range: "+range);
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
-            Invoice i = convertFromDBObject(db, cursor);
-            rangedInvoice.add(i);
-            cursor.moveToNext();
-        }
+        List<Invoice> rangedInvoice =  getBySelection(dbConn, selection, range, SQLiteConnector.INVOICE_COL_DATE);
 
         return rangedInvoice;
     }
 
-    private static Invoice convertFromDBObject(SQLiteDatabase db, Cursor cursor) {
+    protected Invoice convertFromDBObject(SQLiteDatabase db, Cursor cursor) {
         long id = cursor.getLong(0);
         String invNum = cursor.getString(1);
         String vendor = cursor.getString(2);
         DateMidnight invDate = new DateMidnight(cursor.getLong(3));
         Double credit = cursor.getDouble(4);
-        Invoice i = new Invoice(invNum);
+        Invoice i = new Invoice();
+        i.setInvoiceNumber(invNum);
         i.setId(id);
         i.setVendor(vendor);
         i.setDate(invDate);
         i.setCredit(credit);
 
-        i.getPayments().addAll(PaymentInstallment.getAllPaymentsFor(db, i.getId()));
-        Log.d(CLASS_NAME, "got: "+i);
+        i.getPayments().addAll(PaymentInstallment.getAccessor().getAllPaymentsFor(db, i.getId()));
+        Log.d(getLogName(), "got: "+i);
         return i;
-    }
-
-    public long getId() {
-        return _id;
-    }
-
-    public void setId(long id) {
-        this._id = id;
     }
 
     public String toString() {
@@ -192,11 +158,45 @@ public class Invoice {
                 this.getInvoiceNumber(), this.getVendor());
     }
 
-    public DateMidnight getDate() {
-        return date;
+    @Override
+    protected ContentValues getContentValues(SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        values.put(SQLiteConnector.INVOICE_COL_CREDIT, 0);
+        values.put(SQLiteConnector.INVOICE_COL_NUMBER, this.getInvoiceNumber());
+        values.put(SQLiteConnector.INVOICE_COL_VENDOR, this.getVendor());
+        values.put(SQLiteConnector.INVOICE_COL_DATE, this.getDate().getMillis());
+
+        return values;
     }
 
-    public void setDate(DateMidnight date) {
-        this.date = date;
+    @Override
+    protected void foreignObjectPersist(SQLiteConnector dbConn, long id) {
+        if (id == -1) {
+            return;
+        }
+
+        for (PaymentInstallment payment : this.getPayments()) {
+            payment.setInvoiceId(id);
+            payment.persist(dbConn);
+        }
+    }
+
+    @Override
+    protected String getTableName() {
+        return SQLiteConnector.INVOICE_TABLE;
+    }
+
+    @Override
+    protected String[] getColumns() {
+        return SQLiteConnector.INVOICE_COLUMNS.toArray(new String[SQLiteConnector.INVOICE_COLUMNS.size()]);
+    }
+
+    @Override
+    protected String getLogName() {
+        return CLASS_NAME;
+    }
+
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
     }
 }

@@ -18,13 +18,12 @@ import java.util.List;
 public class InvoiceListAdapter extends BaseAdapter {
     private List<Invoice> items;
     private LayoutInflater inflater;
-    private Context context;
 
     public InvoiceListAdapter(Context context, List<Invoice> items) {
-        this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.items = items;
     }
+
 
     @Override
     public int getCount() {
@@ -53,7 +52,15 @@ public class InvoiceListAdapter extends BaseAdapter {
         vendor.setText(i.getVendor());
         invNum.setText(i.getInvoiceNumber());
         invAmount.setText("$"+i.getTotalDue());
-        dueDate.setText(i.getPayments().get(0).getDate().toString("MM/dd/YYYY"));
+        dueDate.setText(i.getPayments().get(0).getDueDate().toString("MM/dd/YYYY"));
         return entry;
+    }
+
+    public List<Invoice> getItems() {
+        return items;
+    }
+
+    public void setItems(List<Invoice> items) {
+        this.items = items;
     }
 }

@@ -17,7 +17,7 @@ import com.google.inject.Inject;
 import com.ycao.cashflowestimation.R;
 import com.ycao.cashflowestimation.core.CashFlowEstimator;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
-import com.ycao.cashflowestimation.domain.CashFlowDate;
+import com.ycao.cashflowestimation.core.CashFlowDate;
 import com.ycao.cashflowestimation.domain.Invoice;
 import com.ycao.cashflowestimation.ui.adapter.EstimationListAdapter;
 import com.ycao.cashflowestimation.utils.Constants;
@@ -66,7 +66,7 @@ public class EstimationFragment extends RoboFragment {
         todayCash.setText(String.valueOf(today.getCalculatedCash()));
 
         final TextView todayDue = (TextView) view.findViewById(R.id.today_invoice_textView);
-        todayDue.setText("(-" + String.valueOf(today.getTotalDue()) + ")");
+        todayDue.setText("(-" + String.valueOf(today.getTotalDueOnThisDay()) + ")");
 
         Button refresh = (Button) view.findViewById(R.id.refresh_button);
 
@@ -126,7 +126,7 @@ public class EstimationFragment extends RoboFragment {
         long firstDate = settings.getLong(INIT_DATE, DateMidnight.now().getMillis());
         float cash = settings.getFloat(INIT_CASH_FLOW, 0);
         CashFlowDate date = new CashFlowDate(new DateMidnight(firstDate));
-        date.setInvoices(Invoice.getAllInvoiceInRange(sqlConn.getWritableDatabase(), date.getDate(), date.getDate()));
+        date.setInvoices(Invoice.getAccessor().getAllInvoiceInRange(sqlConn, date.getDate(), date.getDate()));
         date.setCalculatedCash(cash);
 
         return date;

@@ -1,16 +1,14 @@
 package com.ycao.cashflowestimation.ui.adapter;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.ycao.cashflowestimation.R;
-import com.ycao.cashflowestimation.domain.CashFlowDate;
+import com.ycao.cashflowestimation.core.CashFlowDate;
 
 import java.util.List;
 
@@ -51,7 +49,7 @@ public class EstimationListAdapter extends BaseAdapter {
         TextView date = (TextView) entry.findViewById(R.id.date_textView);
         final CashFlowDate d = (CashFlowDate) getItem(position);
         cashAmount.setText(String.valueOf(d.getCalculatedCash()));
-        invoice.setText("(-"+d.getTotalDue()+")");
+        invoice.setText("(-"+d.getTotalDueOnThisDay()+")");
         String dateString = d.getDate().toString("MM/dd/yyyy\nE");
         date.setText(dateString);
         return entry;
