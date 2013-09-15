@@ -27,7 +27,8 @@ public class CashFlowsFragment extends RoboFragment {
 
     private static final String CLASS_NAME = CashFlowsFragment.class.getName();
 
-    @Inject private SQLiteConnector sqlConn;
+    @Inject
+    private SQLiteConnector sqlConn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

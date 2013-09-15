@@ -1,17 +1,25 @@
 package com.ycao.cashflowestimation.core;
 
+import android.util.Log;
+
+import com.google.inject.Inject;
+import com.ycao.cashflowestimation.dal.SQLiteConnector;
 import com.ycao.cashflowestimation.domain.Invoice;
 import com.ycao.cashflowestimation.domain.PaymentInstallment;
 
 import org.joda.time.DateMidnight;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ycao on 7/27/13.
  */
 public class CashFlowDate {
+
+    private final static String CLASS_NAME = CashFlowDate.class.getName();
 
     private DateMidnight date;
 
@@ -21,9 +29,31 @@ public class CashFlowDate {
 
     private List<Invoice> invoices;
 
-    public CashFlowDate(DateMidnight date) {
+    public CashFlowDate(DateMidnight date, SQLiteConnector sqlConn) {
         this.date = date;
-        invoices = new ArrayList<Invoice>();
+        invoices = new LinkedList<Invoice>();
+
+        //TODO: Make this nested select later
+        String selection = SQLiteConnector.PI_COL_DATE + " = ?";
+        String[] range = new String[]{ String.valueOf(date.getMillis()) };
+        List<PaymentInstallment> paymentInstallments =
+                PaymentInstallment.getAccessor().getBySelection(sqlConn, selection, range, null);
+
+        Set<Long> invoiceIds = getInvoiceIds(paymentInstallments);
+
+        for (Long id : invoiceIds) {
+            Invoice i = Invoice.getAccessor().getById(sqlConn, id);
+            invoices.add(i);
+        }
+    }
+
+    private Set<Long> getInvoiceIds(List<PaymentInstallment> paymentInstallments) {
+        Set<Long> ids = new HashSet<Long>();
+        for (PaymentInstallment p : paymentInstallments) {
+            ids.add(p.getInvoiceId());
+        }
+
+        return ids;
     }
 
     /**

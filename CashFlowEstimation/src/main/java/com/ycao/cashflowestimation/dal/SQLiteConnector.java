@@ -79,9 +79,13 @@ public class SQLiteConnector extends SQLiteOpenHelper {
             PI_COL_AMOUNT_DUE,
             PI_COL_PAID,
             PI_COL_INVOICE_ID, INVOICE_TABLE, ID);
-    private static final String CREATE_PI_TABLE_INDEX = String.format("CREATE INDEX fk_inv_id_idx on %s(%s);",
+    private static final String CREATE_PI_TABLE_INV_ID_INDEX = String.format("CREATE INDEX fk_inv_id_idx on %s(%s);",
             PAYMENT_INSTALLMENT_TABLE,
             PI_COL_INVOICE_ID);
+
+    private static final String CREATE_PI_TABLE_DUE_DATE_INDEX = String.format("CREATE INDEX due_date_idx on %s(%s);",
+            PAYMENT_INSTALLMENT_TABLE,
+            PI_COL_DATE);
 
     /* recurring cashflow */
     public static final String RECURRENT_CASH_FLOW_TABLE = "RECUR_FLOW_TABLE";
@@ -118,9 +122,10 @@ public class SQLiteConnector extends SQLiteOpenHelper {
 
         db.execSQL(CREATE_PAYMENT_INSTALLMENT);
         Log.i(CLASS_NAME, "Created payment intallment table with sql cmd: " + CREATE_PAYMENT_INSTALLMENT);
-        db.execSQL(CREATE_PI_TABLE_INDEX);
-        Log.i(CLASS_NAME, "Created payment intallment table index sql cmd: " + CREATE_PI_TABLE_INDEX);
-
+        db.execSQL(CREATE_PI_TABLE_INV_ID_INDEX);
+        Log.i(CLASS_NAME, "Created payment intallment table invoice id index sql cmd: " + CREATE_PI_TABLE_INV_ID_INDEX);
+        db.execSQL(CREATE_PI_TABLE_DUE_DATE_INDEX);
+        Log.i(CLASS_NAME, "Created payment intallment table due date index sql cmd: " + CREATE_PI_TABLE_DUE_DATE_INDEX);
 
         db.execSQL(CREATE_RECURRENT_CASH_FLOW);
         Log.i(CLASS_NAME, "Created recurrent cash flow table with sql cmd: " + CREATE_RECURRENT_CASH_FLOW);

@@ -3,7 +3,6 @@ package com.ycao.cashflowestimation.core;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
-import com.ycao.cashflowestimation.domain.Invoice;
 import com.ycao.cashflowestimation.domain.RecurrentCashFlow;
 
 import org.joda.time.DateMidnight;
@@ -24,18 +23,12 @@ public class CashFlowEstimator {
     private float weekdayIncome;
     private float weekendIncome;
 
-    public CashFlowDate getNextCashFlowDate(CashFlowDate date) {
-        List<Invoice> invoices = Invoice.getAccessor().getAllInvoiceInRange(sqlConn, date.getDate(), date.getDate());
-        return getNextCashFlowDate(date, getRecurrentExpense(), invoices);
-    }
-
     public List<CashFlowDate> getSubsequentDates(CashFlowDate start, int numOfDays, boolean inclusive) {
         List<CashFlowDate> dates = new LinkedList<CashFlowDate>();
         Expense expense = getRecurrentExpense();
-        List<Invoice> invoices = Invoice.getAccessor().getAllInvoiceInRange(sqlConn, start.getDate(), start.getDate().plusDays(numOfDays));
         CashFlowDate curr = start;
         while (numOfDays-- > 0) {
-            curr = getNextCashFlowDate(curr, expense, invoices);
+            curr = getNextCashFlowDate(curr, expense);
             dates.add(curr);
         }
 
@@ -56,9 +49,8 @@ public class CashFlowEstimator {
         return expense;
     }
 
-    private CashFlowDate getNextCashFlowDate(CashFlowDate date, Expense expense, List<Invoice> invoices) {
-        CashFlowDate nextDay = new CashFlowDate(date.getDate().plusDays(1));
-        nextDay.setInvoices(getInvoicesOn(invoices, nextDay.getDate()));
+    private CashFlowDate getNextCashFlowDate(CashFlowDate date, Expense expense) {
+        CashFlowDate nextDay = new CashFlowDate(date.getDate().plusDays(1), sqlConn);
 
         double cash = date.getCalculatedCash();
         if (nextDay.getDate().getDayOfWeek() < DateTimeConstants.SATURDAY) {
@@ -85,17 +77,6 @@ public class CashFlowEstimator {
         return nextDay;
     }
 
-    private List<Invoice> getInvoicesOn(List<Invoice> invoices, DateMidnight date) {
-        List<Invoice> dueOn = new LinkedList<Invoice>();
-        for (Invoice i : invoices) {
-            if (i.getPaymentDueOn(date).size() > 0) {
-                dueOn.add(i);
-            }
-        }
-
-        return dueOn;
-    }
-
     private float getExpenses(List<RecurrentCashFlow> allOutFlow, RecurrentCashFlow.Schedule freq) {
         float total = 0;
         for (RecurrentCashFlow out : allOutFlow) {
@@ -115,9 +96,8 @@ public class CashFlowEstimator {
 
         Expense expense = getRecurrentExpense();
         CashFlowDate curr = past;
-        List<Invoice> invoices = Invoice.getAccessor().getAllInvoiceInRange(sqlConn, past.getDate(), today);
         while (curr.getDate().isBefore(today)) {
-            curr = getNextCashFlowDate(curr, expense, invoices);
+            curr = getNextCashFlowDate(curr, expense);
         }
 
         return curr;

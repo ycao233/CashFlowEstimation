@@ -18,7 +18,6 @@ import com.ycao.cashflowestimation.R;
 import com.ycao.cashflowestimation.core.CashFlowEstimator;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
 import com.ycao.cashflowestimation.core.CashFlowDate;
-import com.ycao.cashflowestimation.domain.Invoice;
 import com.ycao.cashflowestimation.ui.adapter.EstimationListAdapter;
 import com.ycao.cashflowestimation.utils.Constants;
 
@@ -63,10 +62,10 @@ public class EstimationFragment extends RoboFragment {
         todayHeader.setText("Today is " + today.getDate().toString("MM/dd/yyyy E"));
 
         final EditText todayCash = (EditText) view.findViewById(R.id.today_cash_editText);
-        todayCash.setText(String.valueOf(today.getCalculatedCash()));
+        todayCash.setText("$"+String.valueOf(today.getCalculatedCash()));
 
         final TextView todayDue = (TextView) view.findViewById(R.id.today_invoice_textView);
-        todayDue.setText("(-" + String.valueOf(today.getTotalDueOnThisDay()) + ")");
+        todayDue.setText("($" + String.valueOf(today.getTotalDueOnThisDay()) + ")");
 
         Button refresh = (Button) view.findViewById(R.id.refresh_button);
 
@@ -99,13 +98,13 @@ public class EstimationFragment extends RoboFragment {
                 SharedPreferences.Editor editor = settings.edit();
                 DateMidnight now = DateMidnight.now();
                 editor.putLong(INIT_DATE, now.getMillis());
-                float cashInput = Float.parseFloat(String.valueOf(todayCash.getText()));
+                float cashInput = Float.parseFloat(stripOutDollarSign(todayCash.getText().toString()));
                 editor.putFloat(INIT_CASH_FLOW, cashInput);
                 editor.commit();
                 Log.d(CLASS_NAME, String.format("calculating using day: (%s), and cash amount: (%f)",
                         now.toString("MM/dd/yyyy"), cashInput));
 
-                CashFlowDate today = new CashFlowDate(now);
+                CashFlowDate today = new CashFlowDate(now, sqlConn);
                 today.setCalculatedCash(cashInput);
 
                 EstimationListAdapter adapter = (EstimationListAdapter) cashEstimationList.getAdapter();
@@ -125,11 +124,18 @@ public class EstimationFragment extends RoboFragment {
         estimator.setWeekendIncome(settings.getFloat(WEEKEND_INCOME, WEEKEND_INCOME_DEFAULT));
         long firstDate = settings.getLong(INIT_DATE, DateMidnight.now().getMillis());
         float cash = settings.getFloat(INIT_CASH_FLOW, 0);
-        CashFlowDate date = new CashFlowDate(new DateMidnight(firstDate));
-        date.setInvoices(Invoice.getAccessor().getAllInvoiceInRange(sqlConn, date.getDate(), date.getDate()));
+        CashFlowDate date = new CashFlowDate(new DateMidnight(firstDate), sqlConn);
         date.setCalculatedCash(cash);
 
         return date;
+    }
+
+    private String stripOutDollarSign(String s) {
+        if (s.startsWith("$")) {
+            return s.substring(1);
+        }
+
+        return s;
     }
 
     private class CalculateMoreEstimations extends AsyncTask<Void, Void, Void> {

@@ -10,6 +10,8 @@ import com.ycao.cashflowestimation.dal.SQLiteConnector;
 import org.joda.time.DateMidnight;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -26,6 +28,7 @@ public class Invoice extends Entity {
     private double credit;
     private String vendor;
     private DateMidnight date;
+    private String notes;
     private List<PaymentInstallment> payments = new ArrayList<PaymentInstallment>();
 
     public static Invoice getAccessor() {
@@ -67,6 +70,14 @@ public class Invoice extends Entity {
 
     public void setDate(DateMidnight date) {
         this.date = date;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     /**
@@ -131,6 +142,12 @@ public class Invoice extends Entity {
         String selection = (begin == null && end == null) ? null :  String.format("%s >= ? AND %s <= ?", SQLiteConnector.INVOICE_COL_DATE, SQLiteConnector.INVOICE_COL_DATE);
         String[] range = (begin == null && end == null) ? null : new String[]{String.valueOf(begin.getMillis()), String.valueOf(end.getMillis())};
         List<Invoice> rangedInvoice =  getBySelection(dbConn, selection, range, SQLiteConnector.INVOICE_COL_DATE);
+        Collections.sort(rangedInvoice, new Comparator<Invoice>() {
+            @Override
+            public int compare(Invoice a, Invoice b) {
+                return (a.getPayments().get(0).getDueDate().compareTo(b.getPayments().get(0).getDueDate()));
+            }
+        });
 
         return rangedInvoice;
     }
@@ -141,22 +158,20 @@ public class Invoice extends Entity {
         String vendor = cursor.getString(2);
         DateMidnight invDate = new DateMidnight(cursor.getLong(3));
         Double credit = cursor.getDouble(4);
+        String notes = cursor.getString(5);
         Invoice i = new Invoice();
         i.setInvoiceNumber(invNum);
         i.setId(id);
         i.setVendor(vendor);
         i.setDate(invDate);
         i.setCredit(credit);
+        i.setNotes(notes);
 
         i.getPayments().addAll(PaymentInstallment.getAccessor().getAllPaymentsFor(db, i.getId()));
         Log.d(getLogName(), "got: "+i);
         return i;
     }
 
-    public String toString() {
-        return String.format("%d: invoice number: %s, vendor: %s", this.getId(),
-                this.getInvoiceNumber(), this.getVendor());
-    }
 
     @Override
     protected ContentValues getContentValues(SQLiteDatabase db) {
@@ -165,6 +180,7 @@ public class Invoice extends Entity {
         values.put(SQLiteConnector.INVOICE_COL_NUMBER, this.getInvoiceNumber());
         values.put(SQLiteConnector.INVOICE_COL_VENDOR, this.getVendor());
         values.put(SQLiteConnector.INVOICE_COL_DATE, this.getDate().getMillis());
+        values.put(SQLiteConnector.INVOICE_COL_NOTE, this.getNotes());
 
         return values;
     }
@@ -198,5 +214,10 @@ public class Invoice extends Entity {
 
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
+    }
+
+    public String toString() {
+        return String.format("%d: invoice number: %s, vendor: %s, total due: %f", this.getId(),
+                this.getInvoiceNumber(), this.getVendor(), this.getTotalDue());
     }
 }

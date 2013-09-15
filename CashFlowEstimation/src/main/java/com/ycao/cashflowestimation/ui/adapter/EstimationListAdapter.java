@@ -48,8 +48,8 @@ public class EstimationListAdapter extends BaseAdapter {
         TextView cashAmount = (TextView) entry.findViewById(R.id.cash_textView);
         TextView date = (TextView) entry.findViewById(R.id.date_textView);
         final CashFlowDate d = (CashFlowDate) getItem(position);
-        cashAmount.setText(String.valueOf(d.getCalculatedCash()));
-        invoice.setText("(-"+d.getTotalDueOnThisDay()+")");
+        cashAmount.setText("$"+String.valueOf(d.getCalculatedCash()));
+        invoice.setText("($"+d.getTotalDueOnThisDay()+")");
         String dateString = d.getDate().toString("MM/dd/yyyy\nE");
         date.setText(dateString);
         return entry;

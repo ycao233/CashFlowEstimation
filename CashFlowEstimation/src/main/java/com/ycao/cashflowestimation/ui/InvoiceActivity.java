@@ -55,14 +55,14 @@ public class InvoiceActivity extends RoboFragmentActivity {
     @InjectView(R.id.due_amount_edittext)
     private EditText dueAmountInput;
 
-    private Vibrator vibrator;
+    @InjectView(R.id.note_edittext)
+    private EditText notesInput;
 
     private Button saveButton;
     private Button cancelButton;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
         getActionBar().hide();
 
@@ -111,6 +111,7 @@ public class InvoiceActivity extends RoboFragmentActivity {
         invoice.setCredit(0);
         invoice.setVendor(vendorId.getText().toString());
         invoice.setDate(getDate(invDatePicker));
+        invoice.setNotes(notesInput.getText().toString());
         PaymentInstallment p = new PaymentInstallment();
         p.setDueDate(getDate(dueDatePicker));
         p.setAmountDue(Double.parseDouble(dueAmountInput.getText().toString()));

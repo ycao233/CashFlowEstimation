@@ -50,7 +50,7 @@ public abstract class Entity {
         //no op for most tables
     }
 
-    protected Entity getById(SQLiteConnector dbConn, long id) {
+    public <T extends Entity> T getById(SQLiteConnector dbConn, long id) {
         SQLiteDatabase db = dbConn.getReadableDatabase();
         if (id == -1) {
             return null;
@@ -64,19 +64,19 @@ public abstract class Entity {
         Log.d(getLogName(), "query by id: " + id);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
-            Entity i = convertFromDBObject(db, cursor);
-            return i;
+            T t = convertFromDBObject(db, cursor);
+            return t;
         }
 
         return null;
     }
 
-    protected <T extends Entity> List<T> getBySelection(SQLiteConnector dbConn, String selection, String[] range, String orderBy) {
+    public <T extends Entity> List<T> getBySelection(SQLiteConnector dbConn, String selection, String[] range, String orderBy) {
         SQLiteDatabase db = dbConn.getReadableDatabase();
         List<T> all = new LinkedList<T>();
 
         Cursor cursor = db.query(getTableName(), getColumns(), selection, range, null, null, orderBy);
-        Log.d(getLogName(), "query by: "+selection+" and range: "+range+" ordered by: "+orderBy);
+        Log.d(getLogName(), "query by: "+selection+" and range: "+(range == null ? null : range[0])+" ordered by: "+orderBy);
 
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
