@@ -61,10 +61,17 @@ public class InvoiceActivity extends RoboFragmentActivity {
     private Button saveButton;
     private Button cancelButton;
 
+    private Invoice currInvoice;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         getActionBar().hide();
+
+        long id = getIntent().getLongExtra(SQLiteConnector.ID, -1);
+        if (id != -1) {
+            currInvoice = Invoice.getAccessor().getById(sqlConn, id);
+        }
 
         invDatePicker = (Button) findViewById(R.id.choose_inv_date_edittext);
         setupOnClickDatePickerListener(invDatePicker);

@@ -142,12 +142,7 @@ public class Invoice extends Entity {
         String selection = (begin == null && end == null) ? null :  String.format("%s >= ? AND %s <= ?", SQLiteConnector.INVOICE_COL_DATE, SQLiteConnector.INVOICE_COL_DATE);
         String[] range = (begin == null && end == null) ? null : new String[]{String.valueOf(begin.getMillis()), String.valueOf(end.getMillis())};
         List<Invoice> rangedInvoice =  getBySelection(dbConn, selection, range, SQLiteConnector.INVOICE_COL_DATE);
-        Collections.sort(rangedInvoice, new Comparator<Invoice>() {
-            @Override
-            public int compare(Invoice a, Invoice b) {
-                return (a.getPayments().get(0).getDueDate().compareTo(b.getPayments().get(0).getDueDate()));
-            }
-        });
+        sortByDueDay(rangedInvoice);
 
         return rangedInvoice;
     }
@@ -171,6 +166,16 @@ public class Invoice extends Entity {
         Log.d(getLogName(), "got: "+i);
         return i;
     }
+
+    public void sortByDueDay(List<Invoice> invoices) {
+        Collections.sort(invoices, new Comparator<Invoice>() {
+            @Override
+            public int compare(Invoice a, Invoice b) {
+                return (a.getPayments().get(0).getDueDate().compareTo(b.getPayments().get(0).getDueDate()));
+            }
+        });
+    }
+
 
 
     @Override

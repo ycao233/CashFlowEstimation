@@ -1,12 +1,11 @@
 package com.ycao.cashflowestimation.ui.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -16,6 +15,8 @@ import com.ycao.cashflowestimation.dal.SQLiteConnector;
 import com.ycao.cashflowestimation.domain.Invoice;
 import com.ycao.cashflowestimation.ui.InvoiceActivity;
 import com.ycao.cashflowestimation.ui.adapter.InvoiceListAdapter;
+
+import java.util.List;
 
 import roboguice.fragment.RoboFragment;
 
@@ -30,9 +31,13 @@ public class InvoiceSummaryFragment extends RoboFragment {
     private SQLiteConnector sqlConn;
 
     private Button addInvoiceButton;
-    private int addRequest = 0;
+    private final static int ADD_REQUEST = 0;
+    private final static int EDIT_REQUEST = 0;
+
 
     private InvoiceListAdapter invoiceListAdapter;
+
+    private List<Invoice> allInvoices;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,23 +48,54 @@ public class InvoiceSummaryFragment extends RoboFragment {
             @Override
             public void onClick(View v) {
                 Intent newInvoice = new Intent(getActivity(), InvoiceActivity.class);
-                startActivityForResult(newInvoice, addRequest);
+                startActivityForResult(newInvoice, ADD_REQUEST);
             }
         });
 
         final ListView invoiceList = (ListView) view.findViewById(R.id.invoices_listView);
-        invoiceListAdapter = new InvoiceListAdapter(getActivity(), Invoice.getAccessor().getAllInvoiceInRange(sqlConn, null, null));
+        allInvoices =  Invoice.getAccessor().getAllInvoiceInRange(sqlConn, null, null);
+        invoiceListAdapter = new InvoiceListAdapter(getActivity(), allInvoices);
         invoiceList.setAdapter(invoiceListAdapter);
+        invoiceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Invoice i = (Invoice) invoiceListAdapter.getItem(position);
+                Intent editInvoice = new Intent(getActivity(), InvoiceActivity.class);
+                editInvoice.putExtra(SQLiteConnector.ID, i.getId());
+                startActivityForResult(editInvoice, EDIT_REQUEST);
+            }
+        });
         return view;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (addRequest == requestCode) {
+        if (ADD_REQUEST == requestCode) {
             if (resultCode == InvoiceActivity.CREATED) {
-                invoiceListAdapter.notifyDataSetChanged();
+                long id = data.getLongExtra(SQLiteConnector.ID, -1);
+                if (id != -1) {
+                    Invoice i = Invoice.getAccessor().getById(sqlConn, id);
+                    updateInvoice(i);
+                }
             }
+        }
+    }
+
+    private void updateInvoice(Invoice invoice) {
+        if (invoiceListAdapter != null) {
+            List<Invoice> all = invoiceListAdapter.getItems();
+            for (Invoice i : all) {
+                if (i.getId() == invoice.getId()) {
+                    all.remove(i);
+                    break;
+                }
+            }
+            all.add(invoice);
+            Invoice.getAccessor().sortByDueDay(all);
+            allInvoices = all;
+            invoiceListAdapter.setItems(allInvoices);
+            invoiceListAdapter.notifyDataSetChanged();
         }
     }
 }
