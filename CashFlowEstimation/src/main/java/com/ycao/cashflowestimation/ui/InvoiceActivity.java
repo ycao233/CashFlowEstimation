@@ -24,7 +24,9 @@ import com.ycao.cashflowestimation.domain.PaymentInstallment;
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import roboguice.activity.RoboFragmentActivity;
 import roboguice.inject.ContentView;
@@ -112,9 +114,9 @@ public class InvoiceActivity extends RoboFragmentActivity {
             vendorId.setText(currInvoice.getVendor());
             invNumberInput.setText(currInvoice.getInvoiceNumber());
             notesInput.setText(currInvoice.getNotes());
-            invDatePicker.setText(currInvoice.getDate().toString("MM/DD/YYYY"));
+            invDatePicker.setText(currInvoice.getDate().toString("MM/dd/yyyy"));
             PaymentInstallment p = currInvoice.getPayments().get(0);
-            dueDatePicker.setText(p.getDueDate().toString("MM/DD/YYYY"));
+            dueDatePicker.setText(p.getDueDate().toString("MM/dd/yyyy"));
             dueAmountInput.setText(String.valueOf(p.getAmountDue()));
         }
     }
@@ -131,10 +133,13 @@ public class InvoiceActivity extends RoboFragmentActivity {
         invoice.setVendor(vendorId.getText().toString());
         invoice.setDate(getDate(invDatePicker));
         invoice.setNotes(notesInput.getText().toString());
-        PaymentInstallment p = new PaymentInstallment();
+        List<PaymentInstallment> payments = invoice.getPayments();
+        PaymentInstallment p = payments.size() > 0 ? payments.get(0) : new PaymentInstallment();
         p.setDueDate(getDate(dueDatePicker));
         p.setAmountDue(Double.parseDouble(dueAmountInput.getText().toString()));
-        invoice.addPayment(p);
+        if (payments.size() == 0) {
+            invoice.addPayment(p);
+        }
         return invoice;
     }
 

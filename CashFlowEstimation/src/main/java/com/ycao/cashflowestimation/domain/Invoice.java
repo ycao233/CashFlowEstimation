@@ -127,6 +127,10 @@ public class Invoice extends Entity {
         getPayments().add(p);
     }
 
+    public void setPayments(List<PaymentInstallment> payments) {
+        this.payments = payments;
+    }
+
 
     /**
      * beging / end inclusive

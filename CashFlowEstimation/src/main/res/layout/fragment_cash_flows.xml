@@ -3,20 +3,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:layout_marginLeft="10dp"
+              android:layout_marginRight="10dp">
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:id="@+id/fragment_cash_flow_income_header_textview"
-              style="?android:listSeparatorTextViewStyle"
-              android:text="Incomes "
+              style="@style/HeaderTitleText"
+              android:text="Incomes"
+              android:textColor="@color/theme"
               android:textIsSelectable="false"
               android:textSize="24dip"
-              android:background="#d2f0ff"
               android:paddingTop="5dip"
               android:paddingBottom="5dip"
             />
+    <View
+        android:id="@+id/v_header_separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/theme"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" />
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -68,15 +77,21 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:id="@+id/fragment_cash_flow_income_header_textview"
-              style="?android:listSeparatorTextViewStyle"
+              style="@style/HeaderTitleText"
               android:text="Payables"
+              android:textColor="@color/theme"
               android:textIsSelectable="false"
               android:textSize="24dip"
-              android:background="#d2f0ff"
               android:paddingTop="5dip"
               android:paddingBottom="5dip"
             />
-
+    <View
+        android:id="@+id/v_header_separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/theme"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" />
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"

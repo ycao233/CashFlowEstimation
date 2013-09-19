@@ -9,15 +9,15 @@
               android:layout_width="match_parent"
               android:layout_height="0dip"
               android:id="@+id/today_header_textview"
-              style="?android:listSeparatorTextViewStyle"
+              style="@style/HeaderTitleText"
               android:text="today"
               android:gravity="center"
               android:textIsSelectable="false"
+              android:textColor="@color/theme"
               android:textSize="18dip"
-              android:background="@color/light_blue"
               android:paddingTop="5dip"
-              android:paddingBottom="5dip"
-            />
+              android:paddingBottom="5dip"/>
+
     <LinearLayout
             android:layout_weight="3"
             android:orientation="horizontal"
@@ -64,12 +64,19 @@
     </LinearLayout>
 
     <View
-            android:layout_width="match_parent"
-            android:layout_height="4dip"
-            android:background="#000000"/>
+        android:id="@+id/v_header_separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/theme_sep"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="10dp"/>
+
     <ListView
             android:layout_weight="15"
             android:layout_width="match_parent"
             android:layout_height="0dip"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:id="@+id/cash_estimation_listView"/>
 </LinearLayout>

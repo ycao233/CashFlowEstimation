@@ -1,61 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_width="120dp"
+        android:layout_height="60dip"
+        android:text="Date"
+        android:textSize="20dip"
+        android:id="@+id/date_textView"
+        android:layout_gravity="center"
+        android:background="#f2fdff"
+        android:maxLines="4"
+        android:singleLine="false"
+        android:gravity="center"
+        android:layout_alignParentLeft="true"/>
 
-        <TextView
-                android:layout_weight="4"
-                android:layout_width="0px"
-                android:layout_height="80dip"
-                android:text="Date"
-                android:textSize="20dip"
-                android:id="@+id/date_textView"
-                android:layout_gravity="center"
-                android:background="#f2fdff"
-                android:maxLines="4"
-                android:singleLine="false"
-                android:gravity="center"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dip"
+        android:inputType="numberDecimal"
+        android:text="10000"
+        android:id="@+id/cash_textView"
+        android:textColor="#008000"
+        android:textSize="20dip"
+        android:gravity="center"
+        android:layout_toRightOf="@id/date_textView"/>
 
-        <LinearLayout
-                android:layout_weight="6"
-                android:layout_width="0px"
-                android:layout_height="80dip"
-                android:layout_gravity="center"
-                android:orientation="vertical"
-                android:textAlignment="center">
+    <TextView
+        android:layout_weight="5"
+        android:layout_width="match_parent"
+        android:layout_height="30dip"
+        android:ems="10"
+        android:id="@+id/invoice_on_day_textView"
+        android:textColor="#FF0000"
+        android:text="(-invoice)"
+        android:textIsSelectable="false"
+        android:textSize="20dip"
+        android:layout_toRightOf="@id/date_textView"
+        android:layout_below="@id/cash_textView"
+        android:gravity="center"/>
 
-            <TextView
-                    android:layout_weight="5"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dip"
-                    android:inputType="numberDecimal"
-                    android:text="10000"
-                    android:id="@+id/cash_textView"
-                    android:textColor="#008000"
-                    android:textSize="20dip"
-                    android:gravity="center"/>
-
-            <TextView
-                    android:layout_weight="5"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dip"
-                    android:ems="10"
-                    android:id="@+id/invoice_on_day_textView"
-                    android:textColor="#FF0000"
-                    android:text="(-invoice)"
-                    android:textIsSelectable="false"
-                    android:textSize="20dip"
-                    android:gravity="center"/>
-        </LinearLayout>
-    </LinearLayout>
     <View
-            android:layout_width="match_parent"
-            android:layout_height="2dip"
-            android:background="#0099FF"/>
-</LinearLayout>
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/invoice_on_day_textView"
+        style="@style/Separator"/>
+</RelativeLayout>
