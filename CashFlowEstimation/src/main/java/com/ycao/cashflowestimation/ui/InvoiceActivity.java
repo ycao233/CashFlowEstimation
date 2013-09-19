@@ -68,11 +68,6 @@ public class InvoiceActivity extends RoboFragmentActivity {
 
         getActionBar().hide();
 
-        long id = getIntent().getLongExtra(SQLiteConnector.ID, -1);
-        if (id != -1) {
-            currInvoice = Invoice.getAccessor().getById(sqlConn, id);
-        }
-
         invDatePicker = (Button) findViewById(R.id.choose_inv_date_edittext);
         setupOnClickDatePickerListener(invDatePicker);
 
@@ -110,12 +105,29 @@ public class InvoiceActivity extends RoboFragmentActivity {
                 }
             }
         });
+
+        long id = getIntent().getLongExtra(SQLiteConnector.ID, -1);
+        if (id != -1) {
+            currInvoice = Invoice.getAccessor().getById(sqlConn, id);
+            vendorId.setText(currInvoice.getVendor());
+            invNumberInput.setText(currInvoice.getInvoiceNumber());
+            notesInput.setText(currInvoice.getNotes());
+            invDatePicker.setText(currInvoice.getDate().toString("MM/DD/YYYY"));
+            PaymentInstallment p = currInvoice.getPayments().get(0);
+            dueDatePicker.setText(p.getDueDate().toString("MM/DD/YYYY"));
+            dueAmountInput.setText(String.valueOf(p.getAmountDue()));
+        }
     }
 
     private Invoice getInvoice() {
-        Invoice invoice = new Invoice();
+        Invoice invoice;
+        if (currInvoice == null) {
+           invoice = new Invoice();
+        } else {
+            invoice = currInvoice;
+        }
         invoice.setInvoiceNumber(invNumberInput.getText().toString());
-        invoice.setCredit(0);
+        invoice.setCredit(invoice.getCredit());
         invoice.setVendor(vendorId.getText().toString());
         invoice.setDate(getDate(invDatePicker));
         invoice.setNotes(notesInput.getText().toString());
