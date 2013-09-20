@@ -32,7 +32,6 @@ public class InvoiceSummaryFragment extends RoboFragment {
 
     private Button addInvoiceButton;
     private final static int ADD_REQUEST = 0;
-    private final static int EDIT_REQUEST = 0;
 
 
     private InvoiceListAdapter invoiceListAdapter;
@@ -62,7 +61,7 @@ public class InvoiceSummaryFragment extends RoboFragment {
                 Invoice i = (Invoice) invoiceListAdapter.getItem(position);
                 Intent editInvoice = new Intent(getActivity(), InvoiceActivity.class);
                 editInvoice.putExtra(SQLiteConnector.ID, i.getId());
-                startActivityForResult(editInvoice, EDIT_REQUEST);
+                startActivity(editInvoice);
             }
         });
         return view;

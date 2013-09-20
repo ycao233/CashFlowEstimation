@@ -14,4 +14,5 @@ public class Constants {
 
     public static final float WEEKDAY_INCOME_DEFAULT = 5000;
     public static final float WEEKEND_INCOME_DEFAULT = 10000;
+
 }

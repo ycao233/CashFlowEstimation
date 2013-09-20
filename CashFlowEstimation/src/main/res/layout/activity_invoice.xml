@@ -56,26 +56,64 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp">
 
-
-            <TextView
-                style="@style/HeaderTitleText"
-                android:text="Vendor"/>
-
-            <EditText
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/FormalSingleLineEditText"
-                android:id="@+id/vendor_edittext"/>
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:paddingTop="15dp"
-                android:text="Invoice Number"
-                style="@style/HeaderTitleText"/>
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/FormalSingleLineEditText"
-                android:id="@+id/inv_number_edittext"/>
+                <RelativeLayout
+                    android:layout_width="140dp"
+                    android:layout_height="160dp"
+                    android:layout_marginRight="15dp"
+                    android:id="@+id/imagearea">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/icon_imageview"
+                        android:background="@color/platinum"
+                        android:scaleType="fitXY"
+                        android:layout_alignParentLeft="true"/>
+                    <TextView
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:id="@+id/picture_label"
+                        android:textSize="15dp"
+                        android:layout_alignBottom="@id/icon_imageview"
+                        android:gravity="center"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:text="Take a Picture"/>
+                </RelativeLayout>
+
+                <TextView
+                    style="@style/HeaderTitleText"
+                    android:id="@+id/vendor_label"
+                    android:layout_toRightOf="@id/imagearea"
+                    android:text="Vendor"/>
+
+                <EditText
+                    android:layout_below="@id/vendor_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/imagearea"
+                    style="@style/FormalSingleLineEditText"
+                    android:id="@+id/vendor_edittext"/>
+
+                <TextView
+                    android:layout_below="@id/vendor_edittext"
+                    android:paddingTop="15dp"
+                    android:id="@+id/inv_num_label"
+                    android:layout_toRightOf="@id/imagearea"
+                    android:text="Invoice #"
+                    style="@style/HeaderTitleText"/>
+                <EditText
+                    android:layout_below="@id/inv_num_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/imagearea"
+                    style="@style/FormalSingleLineEditText"
+                    android:id="@+id/inv_number_edittext"/>
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:paddingTop="25dp"
@@ -101,7 +139,7 @@
                 android:layout_height="wrap_content">
                 <TextView
                     style="@style/HeaderTitleText"
-                    android:text="Due Date"/>
+                    android:text="     Due Date "/>
                 <Button
                     style="@style/FormalSingleLineEditText"
                     android:inputType="none"
