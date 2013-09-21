@@ -25,8 +25,7 @@ public class Invoice extends Entity {
     private final static Invoice accessor = new Invoice();
 
     private String invoiceNumber;
-    private double credit;
-    private String vendor;
+    private Vendor vendor;
     private DateMidnight date;
     private String notes;
     private List<PaymentInstallment> payments = new ArrayList<PaymentInstallment>();
@@ -43,24 +42,13 @@ public class Invoice extends Entity {
     }
 
     /**
-     * credit with the vendor
-     */
-    public double getCredit() {
-        return credit;
-    }
-
-    public void setCredit(double credit) {
-        this.credit = credit;
-    }
-
-    /**
      *  vendor name
      */
-    public String getVendor() {
+    public Vendor getVendor() {
         return vendor;
     }
 
-    public void setVendor(String vendor) {
+    public void setVendor(Vendor vendor) {
         this.vendor = vendor;
     }
 
@@ -151,22 +139,21 @@ public class Invoice extends Entity {
         return rangedInvoice;
     }
 
-    protected Invoice convertFromDBObject(SQLiteDatabase db, Cursor cursor) {
+    protected Invoice convertFromDBCursor(SQLiteDatabase db, Cursor cursor) {
         long id = cursor.getLong(0);
         String invNum = cursor.getString(1);
-        String vendor = cursor.getString(2);
+        long vendorId = cursor.getLong(2);
         DateMidnight invDate = new DateMidnight(cursor.getLong(3));
-        Double credit = cursor.getDouble(4);
-        String notes = cursor.getString(5);
+        String notes = cursor.getString(4);
         Invoice i = new Invoice();
         i.setInvoiceNumber(invNum);
         i.setId(id);
-        i.setVendor(vendor);
         i.setDate(invDate);
-        i.setCredit(credit);
         i.setNotes(notes);
+        Vendor v = Vendor.getAccessor().getById(db, vendorId);
+        i.setVendor(v);
 
-        i.getPayments().addAll(PaymentInstallment.getAccessor().getAllPaymentsFor(db, i.getId()));
+        i.setPayments(PaymentInstallment.getAccessor().getAllPaymentsFor(db, i.getId()));
         Log.d(getLogName(), "got: "+i);
         return i;
     }
@@ -185,9 +172,12 @@ public class Invoice extends Entity {
     @Override
     protected ContentValues getContentValues(SQLiteDatabase db) {
         ContentValues values = new ContentValues();
-        values.put(SQLiteConnector.INVOICE_COL_CREDIT, 0);
         values.put(SQLiteConnector.INVOICE_COL_NUMBER, this.getInvoiceNumber());
-        values.put(SQLiteConnector.INVOICE_COL_VENDOR, this.getVendor());
+        //check vendor
+        if (this.getVendor().getId() == -1) {
+            this.getVendor().persist(db);
+        }
+        values.put(SQLiteConnector.INVOICE_COL_VENDOR_ID, this.getVendor().getId());
         values.put(SQLiteConnector.INVOICE_COL_DATE, this.getDate().getMillis());
         values.put(SQLiteConnector.INVOICE_COL_NOTE, this.getNotes());
 
@@ -195,14 +185,14 @@ public class Invoice extends Entity {
     }
 
     @Override
-    protected void foreignObjectPersist(SQLiteConnector dbConn, long id) {
+    protected void foreignObjectPersist(SQLiteDatabase db, long id) {
         if (id == -1) {
             return;
         }
 
         for (PaymentInstallment payment : this.getPayments()) {
             payment.setInvoiceId(id);
-            payment.persist(dbConn);
+            payment.persist(db);
         }
     }
 
@@ -226,7 +216,7 @@ public class Invoice extends Entity {
     }
 
     public String toString() {
-        return String.format("%d: invoice number: %s, vendor: %s, total due: %f", this.getId(),
-                this.getInvoiceNumber(), this.getVendor(), this.getTotalDue());
+        return String.format("%d: invoice number: %s, total due: %f", this.getId(),
+                this.getInvoiceNumber(), this.getTotalDue());
     }
 }

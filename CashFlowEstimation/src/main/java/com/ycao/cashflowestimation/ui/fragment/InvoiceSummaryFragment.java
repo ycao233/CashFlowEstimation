@@ -1,5 +1,6 @@
 package com.ycao.cashflowestimation.ui.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -71,7 +72,7 @@ public class InvoiceSummaryFragment extends RoboFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (ADD_REQUEST == requestCode) {
-            if (resultCode == InvoiceActivity.CREATED) {
+            if (resultCode == Activity.RESULT_OK) {
                 long id = data.getLongExtra(SQLiteConnector.ID, -1);
                 if (id != -1) {
                     Invoice i = Invoice.getAccessor().getById(sqlConn, id);

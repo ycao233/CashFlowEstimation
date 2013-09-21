@@ -103,7 +103,7 @@ public class PaymentInstallment extends Entity {
 
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
-            PaymentInstallment p = convertFromDBObject(db, cursor);
+            PaymentInstallment p = convertFromDBCursor(db, cursor);
             if (p != null) {
                 all.add(p);
             }
@@ -114,7 +114,7 @@ public class PaymentInstallment extends Entity {
     }
 
     @Override
-    protected PaymentInstallment convertFromDBObject(SQLiteDatabase db, Cursor cursor) {
+    protected PaymentInstallment convertFromDBCursor(SQLiteDatabase db, Cursor cursor) {
         long id = cursor.getLong(0);
         Long invId = cursor.getLong(1);
         DateMidnight dueDate = new DateMidnight(cursor.getLong(2));

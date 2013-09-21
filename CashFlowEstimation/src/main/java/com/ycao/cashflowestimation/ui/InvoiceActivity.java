@@ -25,10 +25,12 @@ import com.ycao.cashflowestimation.R;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
 import com.ycao.cashflowestimation.domain.Invoice;
 import com.ycao.cashflowestimation.domain.PaymentInstallment;
+import com.ycao.cashflowestimation.domain.Vendor;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -46,8 +48,6 @@ public class InvoiceActivity extends RoboFragmentActivity {
 
     private static final String CLASS_NAME = InvoiceActivity.class.getName();
 
-    public static int CANCELLED = 0;
-    public static int CREATED = 1;
     public static int PICTURE_REQUEST = 100;
 
     @Inject
@@ -112,7 +112,7 @@ public class InvoiceActivity extends RoboFragmentActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setResult(CANCELLED);
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
@@ -129,7 +129,7 @@ public class InvoiceActivity extends RoboFragmentActivity {
                     } else {
                         Intent result = new Intent();
                         result.putExtra("_id", id);
-                        setResult(CREATED, result);
+                        setResult(RESULT_OK, result);
                         finish();
                     }
                 } else {
@@ -148,7 +148,7 @@ public class InvoiceActivity extends RoboFragmentActivity {
         long id = getIntent().getLongExtra(SQLiteConnector.ID, -1);
         if (id != -1) {
             currInvoice = Invoice.getAccessor().getById(sqlConn, id);
-            vendorId.setText(currInvoice.getVendor());
+            vendorId.setText(currInvoice.getVendor().getName());
             invNumberInput.setText(currInvoice.getInvoiceNumber());
             notesInput.setText(currInvoice.getNotes());
             invDatePicker.setText(currInvoice.getDate().toString("MM/dd/yyyy"));
@@ -161,6 +161,11 @@ public class InvoiceActivity extends RoboFragmentActivity {
     private void startCameraForInvoicePicture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(takePictureIntent, PICTURE_REQUEST);
+    }
+
+    private File getImageFile() {
+        // TODO: picture management
+        return null;
     }
 
     @Override
@@ -187,8 +192,7 @@ public class InvoiceActivity extends RoboFragmentActivity {
             invoice = currInvoice;
         }
         invoice.setInvoiceNumber(invNumberInput.getText().toString());
-        invoice.setCredit(invoice.getCredit());
-        invoice.setVendor(vendorId.getText().toString());
+        invoice.setVendor(Vendor.getAccessor().getByName(sqlConn, vendorId.getText().toString()));
         invoice.setDate(getDate(invDatePicker));
         invoice.setNotes(notesInput.getText().toString());
         List<PaymentInstallment> payments = invoice.getPayments();

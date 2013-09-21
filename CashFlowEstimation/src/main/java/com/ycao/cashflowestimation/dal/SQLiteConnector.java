@@ -25,36 +25,49 @@ public class SQLiteConnector extends SQLiteOpenHelper {
 
     public static final String ID = "_id";
 
+    /* vendor */
+    public static final String VENDOR_TABLE = "VENDOR";
+    public static final String VENDOR_COL_NAME = "NAME";
+    public static final String VENDOR_COL_CREDIT = "CREDIT";
+    public static final String VENDOR_COL_PHONE = "PHONE";
+    public static final List<String> VENDOR_COLUMNS = Arrays.asList(ID, VENDOR_COL_NAME, VENDOR_COL_CREDIT, VENDOR_COL_PHONE);
+    private static final String CREATE_VENDOR = String.format("create table %s " +
+            "(%s integer primary key autoincrement, " +
+            "%s text not null UNIQUE, " +
+            "%s real," +
+            "%s text);",
+            VENDOR_TABLE,
+            ID,
+            VENDOR_COL_NAME,
+            VENDOR_COL_CREDIT,
+            VENDOR_COL_PHONE);
+
     /* invoices */
     public static final String INVOICE_TABLE = "INVOICE";
     public static final String INVOICE_COL_NUMBER = "INVOICE_NUM";
-    public static final String INVOICE_COL_VENDOR = "VENDOR";
-    public static final String INVOICE_COL_CREDIT = "CREDIT";
+    public static final String INVOICE_COL_VENDOR_ID = "VENDOR_ID";
     public static final String INVOICE_COL_DATE = "DATE";
     public static final String INVOICE_COL_NOTE = "NOTE";
-    public static final List<String> INVOICE_COLUMNS = Arrays.asList(ID, INVOICE_COL_NUMBER, INVOICE_COL_VENDOR, INVOICE_COL_DATE, INVOICE_COL_CREDIT, INVOICE_COL_NOTE);
+    public static final List<String> INVOICE_COLUMNS = Arrays.asList(ID, INVOICE_COL_NUMBER, INVOICE_COL_VENDOR_ID, INVOICE_COL_DATE, INVOICE_COL_NOTE);
 
     private static final String CREATE_INVOICE = String.format("create table %s " +
             "(%s integer primary key autoincrement, " +
             "%s text not null, " +
-            "%s text not null, " +
             "%s integer not null, " +
-            "%s real," +
-            "%s text);",
+            "%s integer not null, " +
+            "%s text, " +
+            "FOREIGN KEY (%s) REFERENCES %s(%s));",
             INVOICE_TABLE,
             ID,
             INVOICE_COL_NUMBER,
-            INVOICE_COL_VENDOR,
+            INVOICE_COL_VENDOR_ID,
             INVOICE_COL_DATE,
-            INVOICE_COL_CREDIT,
-            INVOICE_COL_NOTE);
+            INVOICE_COL_NOTE,
+            INVOICE_COL_VENDOR_ID, VENDOR_TABLE, ID);
 
-    private static final String CREATE_INVOICE_TABLE_INDEX_ON_DATE = String.format("CREATE INDEX invoice_date_idx on %s(%s);",
-            INVOICE_TABLE,
-            INVOICE_COL_DATE);
     private static final String CREATE_INVOICE_TABLE_INDEX_ON_VENDOR_INV_NUM = String.format("CREATE UNIQUE INDEX ven_inv_idx on %s(%s, %s);",
             INVOICE_TABLE,
-            INVOICE_COL_VENDOR,
+            INVOICE_COL_VENDOR_ID,
             INVOICE_COL_NUMBER);
 
     /* payment installment */
@@ -113,10 +126,10 @@ public class SQLiteConnector extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.i(CLASS_NAME, "Creating sqlite databases.");
+        db.execSQL(CREATE_VENDOR);
+        Log.i(CLASS_NAME, "Created vendor table with sql cmd: " + CREATE_VENDOR);
         db.execSQL(CREATE_INVOICE);
         Log.i(CLASS_NAME, "Created invoice table with sql cmd: " + CREATE_INVOICE);
-        db.execSQL(CREATE_INVOICE_TABLE_INDEX_ON_DATE);
-        Log.i(CLASS_NAME, "Created invoice table index with sql cmd: " + CREATE_INVOICE_TABLE_INDEX_ON_DATE);
         db.execSQL(CREATE_INVOICE_TABLE_INDEX_ON_VENDOR_INV_NUM);
         Log.i(CLASS_NAME, "Created invoice table index with sql cmd: " + CREATE_INVOICE_TABLE_INDEX_ON_VENDOR_INV_NUM);
 

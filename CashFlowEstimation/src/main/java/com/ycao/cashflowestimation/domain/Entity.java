@@ -27,6 +27,10 @@ public abstract class Entity {
 
     public long persist(SQLiteConnector dbConn) {
         SQLiteDatabase db = dbConn.getWritableDatabase();
+        return persist(db);
+    }
+
+    public long persist(SQLiteDatabase db) {
         ContentValues values = getContentValues(db);
 
         long id = this.getId();
@@ -40,18 +44,22 @@ public abstract class Entity {
             Log.d(getLogName(), "FAILED in persisting " + this.toString());
         } else {
             Log.d(getLogName(), "persisted " + this.toString());
-            foreignObjectPersist(dbConn, this.getId());
+            foreignObjectPersist(db, this.getId());
         }
 
         return this.getId();
     }
 
-    protected void foreignObjectPersist(SQLiteConnector dbConn, long id) {
+    protected void foreignObjectPersist(SQLiteDatabase db, long id) {
         //no op for most tables
     }
 
     public <T extends Entity> T getById(SQLiteConnector dbConn, long id) {
         SQLiteDatabase db = dbConn.getReadableDatabase();
+        return getById(db, id);
+    }
+
+    public <T extends Entity> T getById(SQLiteDatabase db, long id) {
         if (id == -1) {
             return null;
         }
@@ -59,12 +67,12 @@ public abstract class Entity {
         String selection = String.format("%s = ?", SQLiteConnector.ID);
         String[] range =  new String[]{String.valueOf(id)};
         Cursor cursor = db.query(getTableName(), getColumns(),
-                            selection, range, null, null, null);
+                selection, range, null, null, null);
 
         Log.d(getLogName(), "query by id: " + id);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
-            T t = convertFromDBObject(db, cursor);
+            T t = convertFromDBCursor(db, cursor);
             return t;
         }
 
@@ -76,16 +84,21 @@ public abstract class Entity {
         List<T> all = new LinkedList<T>();
 
         Cursor cursor = db.query(getTableName(), getColumns(), selection, range, null, null, orderBy);
-        Log.d(getLogName(), "query by: "+selection+" and range: "+(range == null ? null : range[0])+" ordered by: "+orderBy);
+        Log.d(getLogName(), "query by: "+selection+" and range: " +
+                    (range == null ? null : (range[0]+" to "+range[1])) + " ordered by: "+orderBy);
 
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
-            T e = convertFromDBObject(db, cursor);
+            T e = convertFromDBCursor(db, cursor);
             all.add(e);
             cursor.moveToNext();
         }
 
         return all;
+    }
+
+    public <T extends Entity> List<T> getAll(SQLiteConnector dbConn) {
+        return getBySelection(dbConn, null, null, null);
     }
 
     protected abstract String getTableName();
@@ -94,7 +107,7 @@ public abstract class Entity {
 
     protected abstract String getLogName();
 
-    protected abstract <T extends Entity> T convertFromDBObject(SQLiteDatabase db, Cursor cursor);
+    protected abstract <T extends Entity> T convertFromDBCursor(SQLiteDatabase db, Cursor cursor);
 
     protected abstract ContentValues getContentValues(SQLiteDatabase db);
 }

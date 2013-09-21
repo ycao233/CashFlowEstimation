@@ -97,7 +97,7 @@ public class RecurrentCashFlow extends Entity {
     }
 
     @Override
-    protected RecurrentCashFlow convertFromDBObject(SQLiteDatabase db, Cursor cursor) {
+    protected RecurrentCashFlow convertFromDBCursor(SQLiteDatabase db, Cursor cursor) {
         long id = cursor.getLong(0);
         String description = cursor.getString(1);
         Schedule schedule = Schedule.valueOf(cursor.getString(2));
