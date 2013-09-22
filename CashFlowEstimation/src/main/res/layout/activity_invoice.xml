@@ -63,8 +63,10 @@
                 <RelativeLayout
                     android:layout_width="140dp"
                     android:layout_height="160dp"
-                    android:layout_marginRight="15dp"
-                    android:id="@+id/imagearea">
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="15dp"
+                    android:id="@+id/imagearea"
+                    android:layout_alignParentRight="true">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -87,29 +89,33 @@
                 <TextView
                     style="@style/HeaderTitleText"
                     android:id="@+id/vendor_label"
-                    android:layout_toRightOf="@id/imagearea"
+                    android:layout_toLeftOf="@id/imagearea"
+                    android:layout_alignParentLeft="true"
                     android:text="Vendor"/>
-
-                <EditText
+                <Spinner
                     android:layout_below="@id/vendor_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/imagearea"
-                    style="@style/FormalSingleLineEditText"
-                    android:id="@+id/vendor_edittext"/>
+                    android:id="@+id/vendor_spinner"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@id/imagearea"
+                    android:clickable="true"
+                    />
 
                 <TextView
-                    android:layout_below="@id/vendor_edittext"
+                    android:layout_below="@id/vendor_spinner"
                     android:paddingTop="15dp"
                     android:id="@+id/inv_num_label"
-                    android:layout_toRightOf="@id/imagearea"
+                    android:layout_toLeftOf="@id/imagearea"
+                    android:layout_alignParentLeft="true"
                     android:text="Invoice #"
                     style="@style/HeaderTitleText"/>
                 <EditText
                     android:layout_below="@id/inv_num_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/imagearea"
+                    android:layout_toLeftOf="@id/imagearea"
+                    android:layout_alignParentLeft="true"
                     style="@style/FormalSingleLineEditText"
                     android:id="@+id/inv_number_edittext"/>
 

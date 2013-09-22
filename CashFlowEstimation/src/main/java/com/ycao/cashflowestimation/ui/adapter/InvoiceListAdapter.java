@@ -50,7 +50,7 @@ public class InvoiceListAdapter extends BaseAdapter {
         TextView dueDate = (TextView) entry.findViewById(R.id.duedate_textview);
         TextView notes = (TextView) entry.findViewById(R.id.inv_notes_textview);
 
-        vendor.setText(i.getVendor());
+        vendor.setText(i.getVendor().getName());
         invNum.setText(i.getInvoiceNumber());
         invAmount.setText("$"+i.getTotalDue());
         notes.setText(i.getNotes());

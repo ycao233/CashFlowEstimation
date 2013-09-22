@@ -85,7 +85,7 @@ public abstract class Entity {
 
         Cursor cursor = db.query(getTableName(), getColumns(), selection, range, null, null, orderBy);
         Log.d(getLogName(), "query by: "+selection+" and range: " +
-                    (range == null ? null : (range[0]+" to "+range[1])) + " ordered by: "+orderBy);
+                    (range == null ? null : range[0]) + " ordered by: "+orderBy);
 
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {

@@ -9,6 +9,7 @@ import android.util.Log;
 import com.ycao.cashflowestimation.dal.SQLiteConnector;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -96,7 +97,7 @@ public class Vendor extends Entity {
     }
 
     public List<String> getAllVendorNames(SQLiteConnector dbConn) {
-        List<String> allNames = new ArrayList<String>();
+        List<String> allNames = new LinkedList<String>();
         List<Vendor> all = getAll(dbConn);
         for (Vendor v : all) {
             allNames.add(v.getName());

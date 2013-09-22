@@ -13,10 +13,13 @@ import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,9 +59,6 @@ public class InvoiceActivity extends RoboFragmentActivity {
     private Button invDatePicker;
     private Button dueDatePicker;
 
-    @InjectView(R.id.vendor_edittext)
-    private EditText vendorId;
-
     @InjectView(R.id.inv_number_edittext)
     private EditText invNumberInput;
 
@@ -72,6 +72,7 @@ public class InvoiceActivity extends RoboFragmentActivity {
     private Button cancelButton;
     private ImageView image;
     private TextView pictureLabel;
+    private Spinner vendorSpinner;
 
 
     private Invoice currInvoice;
@@ -141,14 +142,20 @@ public class InvoiceActivity extends RoboFragmentActivity {
         image = (ImageView) findViewById(R.id.icon_imageview);
         pictureLabel = (TextView) findViewById(R.id.picture_label);
 
-
         image.setOnClickListener(startCamera);
         pictureLabel.setOnClickListener(startCamera);
+
+        vendorSpinner = (Spinner) findViewById(R.id.vendor_spinner);
+        List<String> allVendorsList = Vendor.getAccessor().getAllVendorNames(sqlConn);
+        allVendorsList.add(0, "Create New Vendor");
+        ArrayAdapter allVendors = new ArrayAdapter(this, android.R.layout.simple_spinner_item, allVendorsList);
+        vendorSpinner.setAdapter(allVendors);
 
         long id = getIntent().getLongExtra(SQLiteConnector.ID, -1);
         if (id != -1) {
             currInvoice = Invoice.getAccessor().getById(sqlConn, id);
-            vendorId.setText(currInvoice.getVendor().getName());
+            //TODO: vendor
+            //spinner get selection here
             invNumberInput.setText(currInvoice.getInvoiceNumber());
             notesInput.setText(currInvoice.getNotes());
             invDatePicker.setText(currInvoice.getDate().toString("MM/dd/yyyy"));
@@ -192,7 +199,8 @@ public class InvoiceActivity extends RoboFragmentActivity {
             invoice = currInvoice;
         }
         invoice.setInvoiceNumber(invNumberInput.getText().toString());
-        invoice.setVendor(Vendor.getAccessor().getByName(sqlConn, vendorId.getText().toString()));
+        //TODO: vendor
+        //invoice.setVendor(Vendor.getAccessor().getByName(sqlConn, vendorId.getText().toString()));
         invoice.setDate(getDate(invDatePicker));
         invoice.setNotes(notesInput.getText().toString());
         List<PaymentInstallment> payments = invoice.getPayments();
@@ -211,7 +219,7 @@ public class InvoiceActivity extends RoboFragmentActivity {
     }
 
     private boolean validInputs() {
-        return !(empty(vendorId.getText())
+        return !( true //empty(vendorId.getText())
                 || empty(invNumberInput.getText())
                 || empty(dueAmountInput.getText()));
     }
