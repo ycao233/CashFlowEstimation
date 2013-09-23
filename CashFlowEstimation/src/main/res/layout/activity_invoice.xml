@@ -190,8 +190,8 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
+                style="@style/FormalMultiLineEditText"
                 android:gravity="top|left"
-                android:inputType="textMultiLine"
                 android:id="@+id/note_edittext"
                 android:layout_marginBottom="20dp"/>
         </LinearLayout>

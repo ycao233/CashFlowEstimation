@@ -16,35 +16,41 @@
         android:paddingBottom="15dp"
         android:layout_marginBottom="10dp"
         />
-
-    <TextView
-        style="@style/HeaderTitleText"
-        android:text="Name"/>
-    <EditText
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_height="wrap_content"
-        style="@style/FormalSingleLineEditText"
-        android:id="@+id/vendor_name_edittext"/>
-
-    <TextView
-        android:paddingTop="15dp"
-        android:text="Phone Number"
-        style="@style/HeaderTitleText"/>
-    <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/FormalSingleLineEditText"
-        android:inputType="phone"
-        android:id="@+id/phone_number_edittext"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <TextView
+            style="@style/HeaderTitleText"
+            android:text="Name"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/FormalSingleLineEditText"
+            android:id="@+id/vendor_name_edittext"/>
 
-    <TextView
-        android:paddingTop="15dp"
-        android:text="Credit"
-        style="@style/HeaderTitleText"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/FormalSingleLineEditText"
-        android:inputType="numberDecimal"
-        android:id="@+id/credit_edittext"/>
+        <TextView
+            android:paddingTop="15dp"
+            android:text="Phone Number"
+            style="@style/HeaderTitleText"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/FormalSingleLineEditText"
+            android:inputType="phone"
+            android:id="@+id/phone_number_edittext"/>
+
+        <TextView
+            android:paddingTop="15dp"
+            android:text="Credit"
+            style="@style/HeaderTitleText"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/FormalSingleLineEditText"
+            android:inputType="numberDecimal"
+            android:id="@+id/credit_edittext"/>
+    </LinearLayout>
 </LinearLayout>

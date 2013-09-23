@@ -66,6 +66,9 @@
         <item name="android:inputType">text|textAutoCorrect|textCapSentences</item>
     </style>
 
-
+    <style name="FormalMultiLineEditText" parent="EditText">
+        <item name="android:singleLine">false</item>
+        <item name="android:inputType">text|textAutoCorrect|textCapSentences|textMultiLine</item>
+    </style>
 
 </resources>
