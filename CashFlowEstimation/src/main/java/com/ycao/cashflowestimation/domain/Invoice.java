@@ -219,4 +219,12 @@ public class Invoice extends Entity {
         return String.format("%d: invoice number: %s, total due: %f", this.getId(),
                 this.getInvoiceNumber(), this.getTotalDue());
     }
+
+    public void clone(Invoice other) {
+        this.setNotes(other.getNotes());
+        this.setPayments(other.getPayments());
+        this.setDate(other.getDate());
+        this.setVendor(other.getVendor());
+        this.setInvoiceNumber(other.getInvoiceNumber());
+    }
 }

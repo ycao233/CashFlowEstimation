@@ -59,7 +59,7 @@
                 android:text="Estimate Again"
                 style="@style/ButtonText"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/blue_button"
+                android:background="@drawable/theme_grad_button"
                 android:id="@+id/refresh_button"/>
     </LinearLayout>
 

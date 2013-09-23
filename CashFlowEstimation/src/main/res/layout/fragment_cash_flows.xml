@@ -106,13 +106,15 @@
                 android:layout_weight="2"
                 android:layout_width="wrap_content"
                 android:layout_height="0dip"
-                android:text="Estimate Again"
+                android:text="@string/save"
                 android:id="@+id/estimate_button"
+                android:paddingRight="25dp"
+                android:paddingLeft="25dp"
                 android:layout_gravity="center"
                 android:clickable="true"
                 android:enabled="true"
                 android:gravity="center"
-                android:background="@drawable/blue_button"
+                android:background="@drawable/theme_grad_button"
                 style="@style/ButtonText"
                 />
     </LinearLayout>

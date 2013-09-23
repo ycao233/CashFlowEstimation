@@ -3,6 +3,7 @@ package com.ycao.cashflowestimation.ui.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,7 @@ public class InvoiceSummaryFragment extends RoboFragment {
                 Invoice i = (Invoice) invoiceListAdapter.getItem(position);
                 Intent editInvoice = new Intent(getActivity(), InvoiceActivity.class);
                 editInvoice.putExtra(SQLiteConnector.ID, i.getId());
-                startActivity(editInvoice);
+                startActivityForResult(editInvoice, ADD_REQUEST);
             }
         });
         return view;
@@ -73,6 +74,7 @@ public class InvoiceSummaryFragment extends RoboFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (ADD_REQUEST == requestCode) {
             if (resultCode == Activity.RESULT_OK) {
+                Log.d(CLASS_NAME, "Adding invoice...");
                 long id = data.getLongExtra(SQLiteConnector.ID, -1);
                 if (id != -1) {
                     Invoice i = Invoice.getAccessor().getById(sqlConn, id);
@@ -84,18 +86,24 @@ public class InvoiceSummaryFragment extends RoboFragment {
 
     private void updateInvoice(Invoice invoice) {
         if (invoiceListAdapter != null) {
+            boolean cloned = false;
             List<Invoice> all = invoiceListAdapter.getItems();
             for (Invoice i : all) {
                 if (i.getId() == invoice.getId()) {
-                    all.remove(i);
+                    i.setVendor(invoice.getVendor());
+                    i.clone(invoice);
+                    cloned = true;
                     break;
                 }
             }
-            all.add(invoice);
+            if (!cloned) {
+                all.add(invoice);
+            }
             Invoice.getAccessor().sortByDueDay(all);
             allInvoices = all;
             invoiceListAdapter.setItems(allInvoices);
             invoiceListAdapter.notifyDataSetChanged();
         }
     }
+
 }

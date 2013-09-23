@@ -8,6 +8,9 @@
     <string name="title_section3">Cash Flows</string>
     <string name="title_activity_setting">Settings</string>
     <string name="pick_date">Choose Date</string>
+    <string name="save">Save</string>>
+    <string name="cancel">Cancel</string>>
+    <string name="create_new">Create New</string>>
     <string name="invoice_empty_input">Please check your input</string>
     <string name="plus">\u271A</string>
     <string name="cross">\u274C</string>

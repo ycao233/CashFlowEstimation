@@ -86,16 +86,31 @@
                         android:text="Take a Picture"/>
                 </RelativeLayout>
 
-                <TextView
-                    style="@style/HeaderTitleText"
-                    android:id="@+id/vendor_label"
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
                     android:layout_toLeftOf="@id/imagearea"
-                    android:layout_alignParentLeft="true"
-                    android:text="Vendor"/>
+                    android:id="@+id/vendor_label">
+                    <TextView
+                        style="@style/HeaderTitleText"
+                        android:id="@+id/vendor_text_label"
+                        android:layout_height="40dp"
+                        android:gravity="center_vertical"
+                        android:text="Vendor"/>
+                    <Button
+                        android:id="@+id/add_vendor_button"
+                        android:layout_width="30dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:text="@string/plus"
+                        android:background="@drawable/theme_grad_button"
+                        />
+                </RelativeLayout>
+
                 <Spinner
                     android:layout_below="@id/vendor_label"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:id="@+id/vendor_spinner"
                     android:layout_alignParentLeft="true"
                     android:layout_toLeftOf="@id/imagearea"
@@ -104,7 +119,8 @@
 
                 <TextView
                     android:layout_below="@id/vendor_spinner"
-                    android:paddingTop="15dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
                     android:id="@+id/inv_num_label"
                     android:layout_toLeftOf="@id/imagearea"
                     android:layout_alignParentLeft="true"
@@ -113,7 +129,7 @@
                 <EditText
                     android:layout_below="@id/inv_num_label"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_toLeftOf="@id/imagearea"
                     android:layout_alignParentLeft="true"
                     style="@style/FormalSingleLineEditText"

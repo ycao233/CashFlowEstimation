@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:background="@color/theme"
+        android:textStyle="bold"
+        android:text="Create New Vendor"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <TextView
+        style="@style/HeaderTitleText"
+        android:text="Name"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/FormalSingleLineEditText"
+        android:id="@+id/vendor_name_edittext"/>
+
+    <TextView
+        android:paddingTop="15dp"
+        android:text="Phone Number"
+        style="@style/HeaderTitleText"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/FormalSingleLineEditText"
+        android:inputType="phone"
+        android:id="@+id/phone_number_edittext"/>
+
+    <TextView
+        android:paddingTop="15dp"
+        android:text="Credit"
+        style="@style/HeaderTitleText"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/FormalSingleLineEditText"
+        android:inputType="numberDecimal"
+        android:id="@+id/credit_edittext"/>
+</LinearLayout>
