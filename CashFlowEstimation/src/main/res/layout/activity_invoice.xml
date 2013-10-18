@@ -123,6 +123,7 @@
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent">
                 <EditText
+                    android:layout_width="0dp"
                     android:layout_weight="8"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
@@ -136,10 +137,11 @@
                     android:gravity="center"
                     style="@style/FormalSingleLineEditText"/>
                 <TextView
-                    android:layout_weight="3"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
                     android:layout_height="wrap_content"
                     style="@style/FormalSingleLineEditText"
-                    android:textColor="@android:color/holo_red_light"
+                    android:textColor="@android:color/holo_green_light"
                     android:id="@+id/credit_amount_textview"/>
                 </LinearLayout>
 
@@ -160,13 +162,21 @@
                     android:gravity="center_vertical"
                     android:text="Vendor"/>
                 <Button
-                    android:id="@+id/add_vendor_button"
+                    android:id="@+id/edit_vendor_button"
                     android:layout_width="30dp"
                     android:layout_height="40dp"
-                    android:layout_alignParentRight="true"
+                    android:layout_toLeftOf="@+id/add_vendor_button"
+                    android:text="@string/edit"
+                    android:background="@drawable/theme_grad_button"
+                    android:layout_marginRight="5dp"/>
+                <Button
+                    android:id="@id/add_vendor_button"
+                    android:layout_width="30dp"
+                    android:layout_height="40dp"
+                    android:layout_toLeftOf="@+id/delete_vendor_button"
                     android:text="@string/plus"
                     android:background="@drawable/theme_grad_button"
-                    />
+                    android:layout_alignParentRight="true"/>
             </RelativeLayout>
 
             <Spinner

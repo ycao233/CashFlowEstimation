@@ -2,6 +2,7 @@ package com.ycao.cashflowestimation.domain;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -34,12 +35,20 @@ public abstract class Entity {
         ContentValues values = getContentValues(db);
 
         long id = this.getId();
-        if (id == -1) {
-            id = db.insert(getTableName(), null, values);
-            this.setId(id);
-        } else {
-            db.update(getTableName(), values, "_id=" + id, null);
+        try {
+            if (id == -1) {
+                id = db.insert(getTableName(), null, values);
+                this.setId(id);
+            } else {
+                db.update(getTableName(), values, "_id=" + id, null);
+            }
+        } catch (SQLiteConstraintException e) {
+            // this is a runtime exception, I don't want to crash my app when sqlite
+            // failed to insert or update
+            Log.d(getLogName(), "FAILED in persisting "+e.getMessage(), e);
+            return -1;
         }
+
         if (id == -1) {
             Log.d(getLogName(), "FAILED in persisting " + this.toString());
         } else {

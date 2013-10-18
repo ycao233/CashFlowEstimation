@@ -116,4 +116,8 @@ public class Vendor extends Entity {
 
         return null;
     }
+
+    public String toString() {
+        return String.format("%s (%s)", getName(), getPhone());
+    }
 }

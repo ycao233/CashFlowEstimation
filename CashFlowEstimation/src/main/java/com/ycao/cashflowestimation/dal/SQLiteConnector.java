@@ -33,7 +33,7 @@ public class SQLiteConnector extends SQLiteOpenHelper {
     public static final List<String> VENDOR_COLUMNS = Arrays.asList(ID, VENDOR_COL_NAME, VENDOR_COL_CREDIT, VENDOR_COL_PHONE);
     private static final String CREATE_VENDOR = String.format("create table %s " +
             "(%s integer primary key autoincrement, " +
-            "%s text not null UNIQUE, " +
+            "%s text not null, " +
             "%s real," +
             "%s text);",
             VENDOR_TABLE,

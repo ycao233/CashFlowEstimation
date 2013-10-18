@@ -71,6 +71,8 @@ public class InvoiceActivity extends RoboFragmentActivity {
     @InjectView(R.id.due_amount_edittext)
     private EditText dueAmountInput;
 
+    private TextView vendorCredit;
+
     @InjectView(R.id.note_edittext)
     private EditText notesInput;
 
@@ -79,9 +81,10 @@ public class InvoiceActivity extends RoboFragmentActivity {
     private ImageView image;
     private TextView pictureLabel;
     private Button addVendorButton;
+    private Button editVendorButton;
 
     private Spinner vendorSpinner;
-    private ArrayAdapter<String> allVendors;
+    private ArrayAdapter<Vendor> allVendors;
 
     private Invoice currInvoice;
 
@@ -153,37 +156,58 @@ public class InvoiceActivity extends RoboFragmentActivity {
         //image.setOnClickListener(startCamera);
         pictureLabel.setOnClickListener(startCamera);
 
+        vendorCredit = (TextView) findViewById(R.id.credit_amount_textview);
         vendorSpinner = (Spinner) findViewById(R.id.vendor_spinner);
-        List<String> allVendorsList = Vendor.getAccessor().getAllVendorNames(sqlConn);
-        allVendors = new ArrayAdapter(this, R.layout.spinner_item, allVendorsList);
+        allVendors = getAllVendors();
         vendorSpinner.setAdapter(allVendors);
 
         addVendorButton = (Button) findViewById(R.id.add_vendor_button);
         addVendorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAddVendorDialog();
+                showAddVendorDialog(new Vendor());
+            }
+        });
+
+        editVendorButton = (Button) findViewById(R.id.edit_vendor_button);
+        editVendorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Vendor vendor= (Vendor) vendorSpinner.getSelectedItem();
+                if (vendor != null) {
+                    showAddVendorDialog(vendor);
+                }
             }
         });
 
         long id = getIntent().getLongExtra(SQLiteConnector.ID, -1);
         if (id != -1) {
-            currInvoice = Invoice.getAccessor().getById(sqlConn, id);
-            int pos = allVendorsList.indexOf(currInvoice.getVendor().getName());
-            vendorSpinner.setSelection(pos > 0 ? pos : 0);
-            invNumberInput.setText(currInvoice.getInvoiceNumber());
-            notesInput.setText(currInvoice.getNotes());
-            invDatePicker.setText(currInvoice.getDate().toString("MM/dd/yyyy"));
-            PaymentInstallment p = currInvoice.getPayments().get(0);
-            dueDatePicker.setText(p.getDueDate().toString("MM/dd/yyyy"));
-            dueAmountInput.setText(String.valueOf(p.getAmountDue()));
+            populateScreen(Invoice.getAccessor().<Invoice>getById(sqlConn, id));
         }
     }
 
-    private void showAddVendorDialog() {
+    private void populateScreen(Invoice currInvoice) {
+        int pos = allVendors.getPosition(currInvoice.getVendor());
+        vendorSpinner.setSelection(pos > 0 ? pos : 0);
+        invNumberInput.setText(currInvoice.getInvoiceNumber());
+        notesInput.setText(currInvoice.getNotes());
+        invDatePicker.setText(currInvoice.getDate().toString("MM/dd/yyyy"));
+        PaymentInstallment p = currInvoice.getPayments().get(0);
+        dueDatePicker.setText(p.getDueDate().toString("MM/dd/yyyy"));
+        dueAmountInput.setText(String.valueOf(p.getAmountDue()));
+        vendorCredit.setText(String.valueOf(currInvoice.getVendor().getCredit()));
+    }
+
+    private void showAddVendorDialog(final Vendor v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         final View vendorAddDialog = inflater.inflate(R.layout.dialog_add_vendor, null);
+        final EditText name = (EditText) vendorAddDialog.findViewById(R.id.vendor_name_edittext);
+        final EditText phone = (EditText) vendorAddDialog.findViewById(R.id.phone_number_edittext);
+        final EditText credit = (EditText) vendorAddDialog.findViewById(R.id.credit_edittext);
+        name.setText(v.getName());
+        phone.setText(v.getPhone());
+        credit.setText(String.valueOf(v.getCredit()));
         builder
             .setView(vendorAddDialog)
             .setPositiveButton(R.string.save, null)
@@ -193,13 +217,9 @@ public class InvoiceActivity extends RoboFragmentActivity {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText name = (EditText) vendorAddDialog.findViewById(R.id.vendor_name_edittext);
-                EditText phone = (EditText) vendorAddDialog.findViewById(R.id.phone_number_edittext);
-                EditText credit = (EditText) vendorAddDialog.findViewById(R.id.credit_edittext);
                 if (empty(name.getText())) {
                     Toast.makeText(InvoiceActivity.this, getString(R.string.invoice_empty_input), Toast.LENGTH_SHORT).show();
                 } else {
-                    Vendor v = new Vendor();
                     v.setName(name.getText().toString());
                     v.setCredit(empty(credit.getText()) ? 0 : Double.parseDouble(credit.getText().toString()));
                     v.setPhone(empty(phone.getText()) ? "" : phone.getText().toString());
@@ -207,15 +227,20 @@ public class InvoiceActivity extends RoboFragmentActivity {
                     if (id == -1) {
                         Toast.makeText(InvoiceActivity.this, "Failed to create new vendor", Toast.LENGTH_SHORT).show();
                     } else {
-                        allVendors.add(v.getName());
-                        allVendors.notifyDataSetChanged();
-                        int pos = allVendors.getPosition(v.getName());
+                        allVendors = getAllVendors();
+                        vendorSpinner.setAdapter(allVendors);
+                        int pos = allVendors.getPosition(v);
                         vendorSpinner.setSelection(pos);
                     }
                     dialog.dismiss();
                 }
             }
         });
+    }
+
+    private ArrayAdapter<Vendor> getAllVendors() {
+        List<Vendor> allVendorsList = Vendor.getAccessor().getAll(sqlConn);
+        return new ArrayAdapter(this, R.layout.spinner_item, allVendorsList);
     }
 
     private void startCameraForInvoicePicture() {
