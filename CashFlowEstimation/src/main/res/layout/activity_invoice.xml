@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
+    android:background="@color/white"
     android:focusableInTouchMode="true"
     >
     <requestFocus/>
@@ -86,39 +87,8 @@
                         android:text="Take a Picture"/>
                 </RelativeLayout>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:layout_toLeftOf="@id/imagearea"
-                    android:id="@+id/vendor_label">
-                    <TextView
-                        style="@style/HeaderTitleText"
-                        android:id="@+id/vendor_text_label"
-                        android:layout_height="40dp"
-                        android:gravity="center_vertical"
-                        android:text="Vendor"/>
-                    <Button
-                        android:id="@+id/add_vendor_button"
-                        android:layout_width="30dp"
-                        android:layout_height="40dp"
-                        android:layout_alignParentRight="true"
-                        android:text="@string/plus"
-                        android:background="@drawable/theme_grad_button"
-                        />
-                </RelativeLayout>
-
-                <Spinner
-                    android:layout_below="@id/vendor_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:id="@+id/vendor_spinner"
-                    android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@id/imagearea"
-                    android:clickable="true"
-                    />
 
                 <TextView
-                    android:layout_below="@id/vendor_spinner"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:id="@+id/inv_num_label"
@@ -135,8 +105,78 @@
                     style="@style/FormalSingleLineEditText"
                     android:id="@+id/inv_number_edittext"/>
 
+                <TextView
+                    style="@style/HeaderTitleText"
+                    android:layout_below="@id/inv_number_edittext"
+                    android:text="Due Amount"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@id/imagearea"
+                    android:id="@+id/due_amount_label"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"/>
+
+                <LinearLayout
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/due_amount_label"
+                    android:layout_toLeftOf="@id/imagearea"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent">
+                <EditText
+                    android:layout_weight="8"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    style="@style/FormalSingleLineEditText"
+                    android:id="@+id/due_amount_edittext"/>
+                <TextView
+                    android:background="@color/white"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/minus"
+                    android:gravity="center"
+                    style="@style/FormalSingleLineEditText"/>
+                <TextView
+                    android:layout_weight="3"
+                    android:layout_height="wrap_content"
+                    style="@style/FormalSingleLineEditText"
+                    android:textColor="@android:color/holo_red_light"
+                    android:id="@+id/credit_amount_textview"/>
+                </LinearLayout>
+
             </RelativeLayout>
 
+            <View
+                android:layout_margin="10dp"
+                style="@style/Separator"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/vendor_label">
+                <TextView
+                    style="@style/HeaderTitleText"
+                    android:id="@+id/vendor_text_label"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:text="Vendor"/>
+                <Button
+                    android:id="@+id/add_vendor_button"
+                    android:layout_width="30dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/plus"
+                    android:background="@drawable/theme_grad_button"
+                    />
+            </RelativeLayout>
+
+            <Spinner
+                android:layout_below="@id/vendor_label"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:id="@+id/vendor_spinner"
+                android:layout_alignParentLeft="true"
+                android:clickable="true"
+                />
             <LinearLayout
                 android:paddingTop="25dp"
                 android:orientation="horizontal"
@@ -171,17 +211,7 @@
                     android:id="@+id/due_date_edittext"/>
 
             </LinearLayout>
-            <TextView
-                style="@style/HeaderTitleText"
-                android:text="Due Amount"
-                android:paddingTop="15dip"/>
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                style="@style/FormalSingleLineEditText"
-                android:id="@+id/due_amount_edittext"/>
 
             <TextView
                 style="@style/HeaderTitleText"

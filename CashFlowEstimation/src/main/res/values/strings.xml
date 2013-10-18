@@ -13,6 +13,7 @@
     <string name="create_new">Create New</string>>
     <string name="invoice_empty_input">Please check your input</string>
     <string name="plus">\u271A</string>
+    <string name="minus">\u2212</string>
     <string name="cross">\u274C</string>
     <string name="check">\u2714</string>
     <string-array name="schedule_array">
